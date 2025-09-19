@@ -11,7 +11,7 @@
                     <a class="nav-item nav-link" href="<?php echo $url_base;?>/seccion/menu/">Menu</a>
                     <a class="nav-item nav-link" href="<?php echo $url_base;?>/seccion/usuarios/">Usuarios</a>
                     <a class="nav-item nav-link" href="<?php echo $url_base;?>/seccion/comentarios/">Comentarios</a>
-                    <a class="nav-item nav-link" href="#">Cerrar sesion</a>
+                    <a class="nav-item nav-link" href="<?php echo $url_base;?>/">Cerrar sesion</a>
                 </div>
              </nav>
             <!-- place navbar here -->

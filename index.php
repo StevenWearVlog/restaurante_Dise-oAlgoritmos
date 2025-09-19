@@ -1,24 +1,3 @@
-<?php
-include("admin/bd.php");
-$sentencia = $pdo->prepare("SELECT * FROM banner LIMIT 1");
-$sentencia->execute();
-$listaBanner = $sentencia->fetchAll(PDO::FETCH_ASSOC);
-
-$chef1 = $pdo->prepare("SELECT * FROM chef");
-$chef1->execute();
-$chefLista1 = $chef1->fetchAll(PDO::FETCH_ASSOC);
-
-
-$testimonios = $pdo->prepare("SELECT * FROM testimonios");
-$testimonios->execute();
-$testimoniosList = $testimonios->fetchAll(PDO::FETCH_ASSOC);
-
-$platos = $pdo->prepare("SELECT * FROM menu");
-$platos->execute();
-$menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
-?>
-
-
 <!doctype html>
 <html lang="en">
     <head>

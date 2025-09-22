@@ -144,7 +144,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                     <h1 style="color: white; -webkit-text-stroke: 3px black; font-size:70px; font-weight: bold;"><?php echo $banner["titulo"]; ?></h1>
                     <p style="color:white; -webkit-text-stroke: 1px black; font-size:25px; font-weight: bold;"><?php echo $banner["descripcion"] ?></p>
                     <img src="<?php echo $banner["link"] ?>" alt="">
-                    <a href="<?php echo $banner["link"] ?>" class="btn btn-primary">Ver menú</a>
+                    <a href="#menu" class="btn btn-primary">Ver menú</a>
                 <?php endforeach ?>
             </div>
 

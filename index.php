@@ -41,71 +41,100 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark md-auto">
-        <div class="container">
+<nav class="navbar navbar-expand-lg custom-nav">
+  <div class="container">
 
-            <a class="navbar-brand" href="#">Restaurante</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <!-- Nombre del restaurante -->
+    <a class="navbar-brand" href="#">Restaurante</a>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
+    <!-- Botón hamburguesa (móvil) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-item nav-link active" href="#banner" aria-current="page">Inicio<span class="visually-hidden">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#Chef">Chef</a>
-                    </li>
+    <!-- Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#banner" aria-current="page">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#Chef">Chef</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#menu">Menú</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#testimonios">Testimonios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contacto">Contacto</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn-login" href="/admin/login.php">Iniciar sesión</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#menu">Menu</a>
-                    </li>
+<style>
+/* Fondo elegante */
+.custom-nav {
+  background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
+  padding: 12px 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#testimonios">Testimonios</a>
-                    </li>
+/* Marca del restaurante */
+.custom-nav .navbar-brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffcc70 !important; /* Dorado */
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contacto">Contacto</a>
-                    </li>
+.custom-nav .navbar-brand:hover {
+  color: #ffa94d !important;
+}
 
-                    <li class="nav-item">
-                        <a class="nav-link btn-login" href="/admin/login.php">Iniciar sesión</a>
-                    </li>
-    <style>
-    .btn-login {
-    display: inline-block;
-    background: linear-gradient(135deg, #000000, #333333); /* Fondo degradado oscuro */
-    color: #ffffff !important; /* Texto blanco */
-    font-weight: 600;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 25px; /* Bordes redondeados */
-    text-decoration: none; /* Quitar subrayado */
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
+/* Links normales */
+.custom-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
 
-    .btn-login:hover {
-    background: linear-gradient(135deg, #444444, #000000); /* Cambio de tono en hover */
-    transform: translateY(-2px); /* Efecto flotante */
-    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-    }
-    </style>
+/* Hover en links */
+.custom-nav .nav-link:hover {
+  color: #ffcc70 !important; /* Acento dorado */
+  transform: translateY(-2px);
+}
 
-                    
-                </ul>
+/* Botón de iniciar sesión */
+.btn-login {
+  display: inline-block;
+  background: linear-gradient(135deg, #000000, #333333);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 8px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
-            </div>
+.btn-login:hover {
+  background: linear-gradient(135deg, #444444, #000000);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+</style>
 
-        </div>
-
-
-
-    </nav>
 
     <section id="banner" class="container-fluid p-0">
         <div class="banner-img" style="position:relative; background:url('images/banners.jpg') center/cover no-repeat; height: 400px;">

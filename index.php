@@ -73,8 +73,30 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/login.php" ><button>Iniciar sesion</button></a>
+                        <a class="nav-link btn-login" href="/admin/login.php">Iniciar sesión</a>
                     </li>
+    <style>
+    .btn-login {
+    display: inline-block;
+    background: linear-gradient(135deg, #000000, #333333); /* Fondo degradado oscuro */
+    color: #ffffff !important; /* Texto blanco */
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 25px; /* Bordes redondeados */
+    text-decoration: none; /* Quitar subrayado */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .btn-login:hover {
+    background: linear-gradient(135deg, #444444, #000000); /* Cambio de tono en hover */
+    transform: translateY(-2px); /* Efecto flotante */
+    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    }
+    </style>
+
+                    
                 </ul>
 
             </div>
@@ -86,11 +108,11 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
     </nav>
 
     <section id="banner" class="container-fluid p-0">
-        <div class="banner-img" style="position:relative; background:url('images/stake2.jpg') center/cover no-repeat; height: 400px;">
+        <div class="banner-img" style="position:relative; background:url('images/banners.jpg') center/cover no-repeat; height: 400px;">
             <div class="banner-text" style="position:absolute; top:50%; left: 50%; transform:translate(-50%, -50%); text-align:center;">
                 <?php foreach ($listaBanner as $banner): ?>
 
-                    <h1><?php echo $banner["titulo"]; ?></h1>
+                    <h1 style="color: white; -webkit-text-stroke: 2px black; font-size:60px; font-weight: bold;"><?php echo $banner["titulo"]; ?></h1>
                     <p><?php echo $banner["descripcion"] ?></p>
                     <img src="<?php echo $banner["link"] ?>" alt="">
                     <a href="<?php echo $banner["link"] ?>" class="btn btn-primary">Ver menú</a>
@@ -131,7 +153,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if (!empty($chef['linkinstagram'])): ?>
                                     <a href="<?php echo htmlspecialchars($chef['linkinstagram']); ?>"
                                         target="_blank" rel="noopener">
-                                        <img src="images/instagram.svg" alt="insta" style="width:24px">
+                                        <img src="images/Instagram.png" alt="insta" style="width:24px">
                                     </a>
                                 <?php endif; ?>
 
@@ -145,7 +167,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if (!empty($chef['linkfacebook'])): ?>
                                     <a href="<?php echo htmlspecialchars($chef['linkfacebook']); ?>"
                                         target="_blank" rel="noopener">
-                                        <img src="images/facebook.svg" alt="face" style="width:24px">
+                                        <img src="images/facebook.png" alt="face" style="width:24px">
                                     </a>
                                 <?php endif; ?>
                             </div>

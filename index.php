@@ -71,6 +71,10 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                     <li class="nav-item">
                         <a class="nav-link" href="#contacto">Contacto</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/login.php" ><button>Iniciar sesion</button></a>
+                    </li>
                 </ul>
 
             </div>
@@ -88,6 +92,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 
                     <h1><?php echo $banner["titulo"]; ?></h1>
                     <p><?php echo $banner["descripcion"] ?></p>
+                    <img src="<?php echo $banner["link"] ?>" alt="">
                     <a href="<?php echo $banner["link"] ?>" class="btn btn-primary">Ver menú</a>
                 <?php endforeach ?>
             </div>

@@ -41,7 +41,7 @@ $id = isset($_GET['txtID']) ? $_GET['txtID'] : '';
 $nombre = $descripcion = $linkfacebook = $linkinstagram = $linkyoutube = $foto = "";
 
 if ($id) {
-    $select = $conn->prepare("SELECT * FROM chef WHERE id = :id");
+    $select = $conn->prepare("SELECT * FROM colaboradores WHERE id = :id");
     $select->bindParam(':id', $id);
     $select->execute();
     $colaboradores = $select->fetch(PDO::FETCH_ASSOC);

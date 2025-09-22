@@ -24,7 +24,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 
 <head>
     <title>Restaurante</title>
-    <!-- Required meta tags -->
+
     <meta charset="utf-8" />
     <meta
         name="viewport"
@@ -44,16 +44,16 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 <nav class="navbar navbar-expand-lg custom-nav">
   <div class="container">
 
-    <!-- Nombre del restaurante -->
+
     <a class="navbar-brand" href="#">Restaurante</a>
 
-    <!-- Botón hamburguesa (móvil) -->
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Links -->
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
@@ -80,18 +80,18 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 </nav>
 
 <style>
-/* Fondo elegante */
+
 .custom-nav {
   background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
   padding: 12px 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Marca del restaurante */
+
 .custom-nav .navbar-brand {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #ffcc70 !important; /* Dorado */
+  color: #ffcc70 !important; 
   letter-spacing: 1px;
   transition: color 0.3s ease;
 }
@@ -100,7 +100,6 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
   color: #ffa94d !important;
 }
 
-/* Links normales */
 .custom-nav .nav-link {
   color: #ffffff !important;
   font-weight: 500;
@@ -108,13 +107,11 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
   transition: color 0.3s ease, transform 0.2s ease;
 }
 
-/* Hover en links */
 .custom-nav .nav-link:hover {
-  color: #ffcc70 !important; /* Acento dorado */
+  color: #ffcc70 !important;
   transform: translateY(-2px);
 }
 
-/* Botón de iniciar sesión */
 .btn-login {
   display: inline-block;
   background: linear-gradient(135deg, #000000, #333333);

@@ -112,8 +112,8 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
             <div class="banner-text" style="position:absolute; top:50%; left: 50%; transform:translate(-50%, -50%); text-align:center;">
                 <?php foreach ($listaBanner as $banner): ?>
 
-                    <h1 style="color: white; -webkit-text-stroke: 2px black; font-size:60px; font-weight: bold;"><?php echo $banner["titulo"]; ?></h1>
-                    <p><?php echo $banner["descripcion"] ?></p>
+                    <h1 style="color: white; -webkit-text-stroke: 3px black; font-size:70px; font-weight: bold;"><?php echo $banner["titulo"]; ?></h1>
+                    <p style="color:white; -webkit-text-stroke: 1px black; font-size:25px; font-weight: bold;"><?php echo $banner["descripcion"] ?></p>
                     <img src="<?php echo $banner["link"] ?>" alt="">
                     <a href="<?php echo $banner["link"] ?>" class="btn btn-primary">Ver menú</a>
                 <?php endforeach ?>
@@ -144,7 +144,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
                     <div class="card h-100">
 
 
-                        <img src="images/<?php echo $chef["foto"]; ?>" alt="Chef1" style="max-width:500px; border-radius:9px">
+                        <img src="images/<?php echo $chef["foto"]; ?>" alt="Chef1" style="max-width:400px; border-radius:9px">
                         <div class="card-body">
 
                             <h5 class="card-title"><?php echo $chef["nombre"]; ?></h5>
@@ -220,7 +220,7 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
 
     <section id="menu">
         <div class="container">
-            <h2 class="text-center">Recomendados</h2>
+            <h2 class="text-center">Recomendados del menu</h2>
             <br>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <?php foreach ($menuLista as $menu): ?>

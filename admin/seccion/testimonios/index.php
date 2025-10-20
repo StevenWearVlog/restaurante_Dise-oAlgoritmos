@@ -65,8 +65,7 @@ if(isset($_GET["txtID"])){
                                     <td><?php echo $value["id"];?></td>
                                     <td><?php echo $value["opinion"];?></td>
                                     <td><?php echo $value["nombre"];?></td>
-                                    <td><?php echo $value["fecha_insercion"];?></td>
-                                    
+
                                     <td>
                                         <a name="" id="" class="btn btn-info" href="editar.php?txtID=<?php echo $value["id"]; ?>" role="button">Editar</a>
                                         <a name="" id="" class="btn btn-danger" href="index.php?txtID= <?php echo $value["id"];?>" role="button">Borrar</a>

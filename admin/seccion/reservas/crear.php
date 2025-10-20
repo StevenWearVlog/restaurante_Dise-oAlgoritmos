@@ -2,7 +2,7 @@
 include("../../bd.php");
 include("../../templates/header.php");
 
-// Obtenemos las reservas actuales
+// Obtenemos las reservas actuales (ocupadas)
 $sentencia = $pdo->prepare("SELECT * FROM reservas WHERE estado = 1");
 $sentencia->execute();
 $reservasOcupadas = $sentencia->fetchAll(PDO::FETCH_ASSOC);
@@ -24,24 +24,51 @@ foreach ($reservasOcupadas as $reserva) {
 
 // Crear reserva
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $cliente = $_POST["cliente"];
-    $fecha = $_POST["fecha"];
-    $hora = $_POST["hora"];
-    $mesa = $_POST["mesa"];
+    // Capturar y sanitizar (mínimo)
+    $cliente = isset($_POST["nombre_cliente"]) ? trim($_POST["nombre_cliente"]) : '';
+    $fecha = isset($_POST["fecha"]) ? $_POST["fecha"] : '';
+    $hora = isset($_POST["hora"]) ? $_POST["hora"] : '';
+    $mesa = isset($_POST["mesa"]) ? (int)$_POST["mesa"] : 0;
+    $telefono = isset($_POST["telefono"]) ? trim($_POST["telefono"]) : '';
+    $numero_personas = isset($_POST["numero_personas"]) ? (int)$_POST["numero_personas"] : 0;
 
-    try {
-        $sentencia = $pdo->prepare("INSERT INTO reservas (cliente, fecha, hora, mesa, estado) 
-                                    VALUES (:cliente, :fecha, :hora, :mesa, 1)");
-        $sentencia->bindParam(":cliente", $cliente);
-        $sentencia->bindParam(":fecha", $fecha);
-        $sentencia->bindParam(":hora", $hora);
-        $sentencia->bindParam(":mesa", $mesa);
-        $sentencia->execute();
+    // Validaciones básicas
+    $errores = [];
+    if ($cliente === '') $errores[] = "El nombre del cliente es obligatorio.";
+    if ($fecha === '') $errores[] = "La fecha es obligatoria.";
+    if ($hora === '') $errores[] = "La hora es obligatoria.";
+    if ($telefono === '') $errores[] = "El teléfono es obligatorio.";
+    if ($numero_personas <= 0) $errores[] = "El número de personas debe ser mayor a 0.";
+    if ($mesa <= 0 || $mesa > $totalMesas) $errores[] = "Mesa inválida.";
 
-        header("Location:index.php");
-        exit;
-    } catch (PDOException $e) {
-        echo "Error al crear la reserva: " . $e->getMessage();
+    if (empty($errores)) {
+        try {
+            // Opcional: comprobar que la mesa no esté ya ocupada (estado=1) en la misma fecha/hora
+            $check = $pdo->prepare("SELECT COUNT(*) FROM reservas WHERE mesa = :mesa AND fecha = :fecha AND hora = :hora AND estado = 1");
+            $check->bindParam(':mesa', $mesa, PDO::PARAM_INT);
+            $check->bindParam(':fecha', $fecha);
+            $check->bindParam(':hora', $hora);
+            $check->execute();
+            $count = (int)$check->fetchColumn();
+            if ($count > 0) {
+                $errores[] = "La mesa seleccionada ya tiene una reserva para la misma fecha y hora.";
+            } else {
+                $sentencia = $pdo->prepare("INSERT INTO reservas (nombre_cliente, fecha, hora, mesa, telefono, numero_personas, estado) 
+                                            VALUES (:nombre_cliente, :fecha, :hora, :mesa, :telefono, :numero_personas, 1)");
+                $sentencia->bindParam(":nombre_cliente", $cliente);
+                $sentencia->bindParam(":fecha", $fecha);
+                $sentencia->bindParam(":hora", $hora);
+                $sentencia->bindParam(":mesa", $mesa, PDO::PARAM_INT);
+                $sentencia->bindParam(":telefono", $telefono);
+                $sentencia->bindParam(":numero_personas", $numero_personas, PDO::PARAM_INT);
+                $sentencia->execute();
+
+                header("Location: index.php");
+                exit;
+            }
+        } catch (PDOException $e) {
+            $errores[] = "Error al crear la reserva: " . $e->getMessage();
+        }
     }
 }
 ?>
@@ -56,6 +83,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <main class="container mt-4">
+    <?php if (!empty($errores)): ?>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                <?php foreach ($errores as $err): ?>
+                    <li><?= htmlspecialchars($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
     <div class="card mb-4">
         <div class="card-header">Mapa de Mesas</div>
         <div class="card-body">
@@ -83,10 +120,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card">
         <div class="card-header">Nueva Reserva</div>
         <div class="card-body">
-            <form action="" method="POST">
+            <form method="POST">
                 <div class="mb-3">
                     <label class="form-label">Nombre del Cliente:</label>
-                    <input type="text" class="form-control" name="cliente" required>
+                    <input type="text" class="form-control" name="nombre_cliente" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Teléfono:</label>
+                    <input type="text" class="form-control" name="telefono" required>
                 </div>
 
                 <div class="mb-3">
@@ -100,21 +142,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Número de Personas:</label>
+                    <input type="number" class="form-control" name="numero_personas" required min="1">
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Mesa:</label>
                     <select class="form-select" name="mesa" required>
-                        <?php foreach ($mesas as $filaIndex => $fila): ?>
-                            <?php foreach ($fila as $colIndex => $estado): ?>
-                                <?php $numMesa = $filaIndex * $columnas + $colIndex + 1; ?>
-                                <?php if ($numMesa <= $totalMesas && $estado == 0): ?>
-                                    <option value="<?= $numMesa ?>">Mesa <?= $numMesa ?></option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
+                        <?php
+                        // Cargar mesas libres (donde no haya reserva activa)
+                        $stmt = $pdo->prepare("SELECT mesa FROM reservas WHERE estado = 'ocupado'");
+                        $stmt->execute();
+                        $ocupadas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                        for ($i = 1; $i <= 10; $i++):
+                            if (!in_array($i, $ocupadas)):
+                        ?>
+                                <option value="<?= $i ?>">Mesa <?= $i ?></option>
+                        <?php 
+                            endif;
+                        endfor;
+                        ?>
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-success">Crear Reserva</button>
-                <a class="btn btn-primary" href="index.php">Cancelar</a>
+                <button type="submit" class="btn btn-success">Guardar Reserva</button>
+                <a href="index.php" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
         <div class="card-footer text-muted"></div>

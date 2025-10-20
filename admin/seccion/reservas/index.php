@@ -1,29 +1,27 @@
 <?php
 include("../../bd.php");
+include("../../templates/header.php");
 
-
+// Obtener todas las reservas
 $sentencia = $pdo->prepare("SELECT * FROM reservas ORDER BY fecha, hora, mesa");
 $sentencia->execute();
 $reservasList = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-
+// Borrar reserva si viene txtID
 if (isset($_GET["txtID"])) {
-    $txtID = $_GET["txtID"];
-    $borrar = $pdo->prepare("DELETE FROM reservas WHERE id=:id");
-    $borrar->bindParam(":id", $txtID);
+    $txtID = (int)$_GET["txtID"];
+    $borrar = $pdo->prepare("DELETE FROM reservas WHERE id = :id");
+    $borrar->bindParam(":id", $txtID, PDO::PARAM_INT);
     $borrar->execute();
-    header("Location:index.php");
+    header("Location: index.php");
     exit;
 }
 
-
+// Para mostrar mapa de mesas
 $totalMesas = 10; // numero de mesas
 $columnas = 5; // columnas
-
-
 $filas = ceil($totalMesas / $columnas);
 $mesas = array_fill(0, $filas, array_fill(0, $columnas, 0));
-
 
 foreach ($reservasList as $reserva) {
     if ($reserva['estado'] == 1) {
@@ -35,24 +33,16 @@ foreach ($reservasList as $reserva) {
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <title>Reservas</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/yourcode.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
 </head>
 <body>
-<header>
-    <?php include("../../templates/header.php"); ?>
-   
-</header>
-
 <main>
-    
     <section class="container mt-5">
         <div class="card mb-4">
             <div class="card-header">
@@ -91,8 +81,10 @@ foreach ($reservasList as $reserva) {
                             <tr>
                                 <th>ID</th>
                                 <th>Cliente</th>
+                                <th>Telefono</th>
                                 <th>Fecha</th>
                                 <th>Hora</th>
+                                <th>Numero de personas</th>
                                 <th>Mesa</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -101,24 +93,26 @@ foreach ($reservasList as $reserva) {
                         <tbody>
                             <?php foreach ($reservasList as $reserva): ?>
                                 <tr>
-                                    <td><?= $reserva["id"] ?></td>
-                                    <td><?= htmlspecialchars($reserva["cliente"]) ?></td>
-                                    <td><?= $reserva["fecha"] ?></td>
-                                    <td><?= $reserva["hora"] ?></td>
-                                    <td><?= $reserva["mesa"] ?></td>
+                                    <td><?= htmlspecialchars($reserva["id"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["nombre_cliente"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["fecha"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["hora"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["mesa"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["telefono"]) ?></td>
+                                    <td><?= htmlspecialchars($reserva["numero_personas"]) ?></td>
                                     <td>
-                                        <?php if($reserva["estado"] == 1): ?>
-                                            <span class="badge bg-danger">Ocupada</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-success">Libre</span>
-                                        <?php endif; ?>
+                                        <span class="badge <?= $reserva['estado'] == 'ocupado' ? 'bg-danger' : 'bg-success' ?>">
+                            <?= ucfirst($reserva['estado']) ?>
                                     </td>
                                     <td>
-                                        <a class="btn btn-info btn-sm" href="editar.php?txtID=<?= $reserva["id"] ?>">Editar</a>
-                                        <a class="btn btn-danger btn-sm" href="index.php?txtID=<?= $reserva["id"] ?>" onclick="return confirm('¿Deseas eliminar esta reserva?');">Borrar</a>
+                                        <a class="btn btn-info btn-sm" href="editar.php?txtID=<?= urlencode($reserva["id"]) ?>">Editar</a>
+                                        <a class="btn btn-danger btn-sm" href="index.php?txtID=<?= urlencode($reserva["id"]) ?>" onclick="return confirm('¿Deseas eliminar esta reserva?');">Borrar</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
+                            <?php if (empty($reservasList)): ?>
+                                <tr><td colspan="9" class="text-center">No hay reservas</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -128,7 +122,6 @@ foreach ($reservasList as $reserva) {
 
     </section>
 </main>
-
 
 <footer>
     <?php include("../../templates/footer.php"); ?>

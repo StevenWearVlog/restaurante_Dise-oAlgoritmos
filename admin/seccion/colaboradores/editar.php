@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $foto = isset($_POST['foto']) ? $_POST['foto'] : "";
 
     try {
-        $stmt = $pdo->prepare("UPDATE chef 
+        $stmt = $pdo->prepare("UPDATE colaboradores
                                SET nombre = :nombre, 
                                    descripcion = :descripcion, 
                                    linkfacebook = :linkfacebook, 
@@ -42,7 +42,7 @@ $id = isset($_GET['txtID']) ? $_GET['txtID'] : '';
 $nombre = $descripcion = $linkfacebook = $linkinstagram = $linkyoutube = $foto = "";
 
 if ($id) {
-    $select = $pdo->prepare("SELECT * FROM chef WHERE id = :id");
+    $select = $pdo->prepare("SELECT * FROM colaboradores WHERE id = :id");
     $select->bindParam(':id', $id);
     $select->execute();
     $chef = $select->fetch(PDO::FETCH_ASSOC);

@@ -17,7 +17,7 @@ $sentencia = $pdo->prepare("SELECT * FROM banner LIMIT 1");
 $sentencia->execute();
 $listaBanner = $sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-$chef1 = $pdo->prepare("SELECT * FROM chef");
+$chef1 = $pdo->prepare("SELECT * FROM colaboradores");
 $chef1->execute();
 $chefLista1 = $chef1->fetchAll(PDO::FETCH_ASSOC);
 
@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
                 <div class="col d-flex justify-content-center">
                     <div class="card h-100">
                         <?php 
-                        $imgPath = $menu['foto'] ? "/restaurant/" . $menu['foto'] : "/restaurant/uploads/menu/default.jpg";
+                        $imgPath = $menu['foto'] ? "/restaurant/" . $menu['foto'] : "uploads/menu/default.jpg";
                         ?>
                         <img src="<?php echo htmlspecialchars($imgPath); ?>" 
                              alt="<?php echo htmlspecialchars($menu['nombre']); ?>" 

@@ -12,6 +12,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $linkyoutube = isset($_POST['linkyoutube']) ? $_POST['linkyoutube'] : "";
     $foto = isset($_POST['foto']) ? $_POST['foto'] : "";
 
+    // Buscar foto actual
+    $stmt = $conn->prepare("SELECT foto FROM colaboradores WHERE id=:id");
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    $registro = $stmt->fetch(PDO::FETCH_ASSOC);
+    $fotoActual = $registro["foto"];
+
+    // Manejo de nueva foto
+    $foto = $fotoActual;
+    if(isset($_FILES["foto"]["name"]) && $_FILES["foto"]["name"] != ""){
+        $foto = time()."_".$_FILES["foto"]["name"];
+        $tmpFoto = $_FILES["foto"]["tmp_name"];
+        move_uploaded_file($tmpFoto, "../../img/".$foto);
+
+        // Borrar foto anterior si existía
+        if($fotoActual != "" && file_exists("../../img/".$fotoActual)){
+            unlink("../../img/".$fotoActual);
+        }
+    }
+
     try {
         $stmt = $conn->prepare("UPDATE colaboradores 
                                SET nombre = :nombre, 
@@ -71,7 +91,7 @@ if ($id) {
         <div class="card">
             <div class="card-header">Editar Chef</div>
             <div class="card-body">
-                <form action="" method="post">
+                <form action="" method="post" enctype="multipart/form-data">
                     <!-- id oculto -->
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
@@ -112,8 +132,7 @@ if ($id) {
 
                     <div class="mb-3">
                         <label class="form-label">Foto:</label>
-                        <input type="text" class="form-control" name="foto"
-                               value="<?php echo htmlspecialchars($foto); ?>"
+                        <input type="file" class="form-control" name="foto"
                                placeholder="Nombre o ruta del archivo de la foto (ej. chef.jpg)">
                     </div>
 

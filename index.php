@@ -249,21 +249,38 @@ $menuLista = $platos->fetchAll(PDO::FETCH_ASSOC);
             <h2 class="text-center">Recomendados del menu</h2>
             <br>
             <div class="row row-cols-1 row-cols-md-3 g-4">
-                <?php foreach ($menuLista as $menu): ?>
-                    <div class="col d-flex justify-content-center">
+                <?php
+    $menu = [
+        "Entradas" => [
+            ["nombre" => "Empanadas", "precio" => 5000],
+            ["nombre" => "Arepas", "precio" => 4000],
+            ["nombre" => "Patacones", "precio" => 6000]
+        ],
+        "Platos Fuertes" => [
+            ["nombre" => "Bandeja Paisa", "precio" => 18000],
+            ["nombre" => "Sancocho", "precio" => 15000],
+            ["nombre" => "Ajiaco", "precio" => 16000]
+        ],
+        "Bebidas" => [
+            ["nombre" => "Jugo Natural", "precio" => 4000],
+            ["nombre" => "Gaseosa", "precio" => 3000],
+            ["nombre" => "Cerveza", "precio" => 6000]
+        ],
+        "Postres" => [
+            ["nombre" => "Flan", "precio" => 5000],
+            ["nombre" => "Arroz con leche", "precio" => 4500],
+            ["nombre" => "Helado", "precio" => 5500]
+        ]
+    ];
 
-                        <div class="card h-100">
-                            <img src="images/<?php echo $menu["foto"] ?>" alt="Bandeja Paisa" class="card-img-top rounded-3">
-                            <div class="card-body">
-                                <h5 class="card-title"><?php echo $menu["nombre"] ?></h5>
-                                <p class="card-text small"><strong>Ingredientes: </strong><?php echo $menu["ingredientes"] ?></p>
-                                <p class="card-text"><strong>Precio: </strong><?php echo $menu["precio"] ?><strong>$</strong></p>
-                            </div>
-                        </div>
-
-
-                    </div>
-                <?php endforeach ?>
+    foreach ($menu as $categoria => $platos) {
+        echo "<h2>$categoria</h2><ul>";
+        foreach ($platos as $plato) {
+            echo "<li>{$plato['nombre']} - $" . number_format($plato['precio']) . "</li>";
+        }
+        echo "</ul>";
+    }
+    ?>
 
             </div>
 

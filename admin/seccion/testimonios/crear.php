@@ -6,7 +6,7 @@ if($_POST){
     $nombre = isset($_POST["nombre"]) ? $_POST["nombre"] : "";
     $opinion = isset($_POST["opinion"]) ? $_POST["opinion"] : "";
 
-    $sentencia = $conn->prepare("INSERT INTO testimonios (nombre, opinion) 
+    $sentencia = $pdo->prepare("INSERT INTO testimonios (nombre, opinion) 
                                 VALUES (:nombre, :opinion);");
 
     $sentencia->bindParam(":nombre" , $nombre);

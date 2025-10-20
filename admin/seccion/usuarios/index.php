@@ -1,13 +1,13 @@
 <?php
 include("../../bd.php");
-$sentencia=$conn->prepare("SELECT * FROM usuarios;");
+$sentencia=$pdo->prepare("SELECT * FROM usuarios;");
 $sentencia->execute();
 $resultado=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 if(isset($_GET["txtID"])){
     $txtID=(isset($_GET["txtID"]))?$_GET["txtID"]:"";
 
-    $borrar=$conn->prepare("DELETE FROM usuarios WHERE id=:id");
+    $borrar=$pdo->prepare("DELETE FROM usuarios WHERE id=:id");
     
     $borrar->bindParam(":id", $txtID);
     $borrar->execute();

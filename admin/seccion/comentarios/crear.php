@@ -7,7 +7,7 @@ if($_POST){
     $correo = isset($_POST["correo"]) ? $_POST["correo"] : "";
     $mensaje = isset($_POST["mensaje"]) ? $_POST["mensaje"] : "";
 
-    $sentencia = $conn->prepare("INSERT INTO mensaje (nombre, correo, mensaje) 
+    $sentencia = $pdo->prepare("INSERT INTO mensaje (nombre, correo, mensaje) 
                                 VALUES (:nombre, :correo, :mensaje);");
 
     $sentencia->bindParam(":nombre" , $nombre);
@@ -58,4 +58,3 @@ if($_POST){
         </main>
     </body>
 </html>
-

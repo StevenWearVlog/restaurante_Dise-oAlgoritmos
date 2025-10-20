@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $correo = isset($_POST['correo']) ? $_POST['correo'] : "";
 
     try {
-        $stmt = $conn->prepare("UPDATE usuarios 
+        $stmt = $pdo->prepare("UPDATE usuarios 
                                SET usuario = :usuario, 
                                    password = :password, 
                                    correo = :correo 

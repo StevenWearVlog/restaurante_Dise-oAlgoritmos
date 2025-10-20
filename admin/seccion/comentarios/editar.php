@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mensaje = isset($_POST['mensaje']) ? $_POST['mensaje'] : "";
 
     try {
-        $stmt = $conn->prepare("UPDATE mensaje 
+        $stmt = $pdo->prepare("UPDATE mensaje 
                                SET nombre = :nombre, 
                                    correo = :correo, 
                                    mensaje = :mensaje 
@@ -31,7 +31,7 @@ $id = isset($_GET['txtID']) ? $_GET['txtID'] : '';
 $nombre = $correo = $mensaje = "";
 
 if ($id) {
-    $select = $conn->prepare("SELECT * FROM mensaje WHERE id = :id");
+    $select = $pdo->prepare("SELECT * FROM mensaje WHERE id = :id");
     $select->bindParam(':id', $id);
     $select->execute();
     $row = $select->fetch(PDO::FETCH_ASSOC);
@@ -51,6 +51,7 @@ if ($id) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+   
 </head>
 <body>
     <main>

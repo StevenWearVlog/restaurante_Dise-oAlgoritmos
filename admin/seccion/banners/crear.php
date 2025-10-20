@@ -7,9 +7,13 @@ if($_POST){
     $descripcion = isset($_POST["Descripcion"]) ? $_POST["Descripcion"] : "";
     $enlace = isset($_POST["Enlace"]) ? $_POST["Enlace"] : "";
 
+    
 
+    //print_r($titulo);
+    //print_r($descripcion);
+    //print_r($enlace);
 
-    $sentencia = $conn->prepare("INSERT INTO banner (titulo,descripcion,link) VALUES (:titulo, :descripcion, :enlace);");
+    $sentencia = $pdo->prepare("INSERT INTO banner (titulo,descripcion,link) VALUES (:titulo, :descripcion, :enlace);");
     $sentencia->bindParam(":titulo" , $titulo);
     $sentencia->bindParam(":descripcion" , $descripcion);
     $sentencia->bindParam(":enlace", $enlace);
@@ -44,7 +48,6 @@ if($_POST){
 
     <body>
         <main>
-
             <div class="card">
                 <div class="card-header">Banners</div>
                 <div class="card-body">

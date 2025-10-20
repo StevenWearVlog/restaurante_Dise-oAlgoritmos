@@ -8,15 +8,9 @@ if($_POST){
     $linkfacebook = isset($_POST["linkfacebook"]) ? $_POST["linkfacebook"] : "";
     $linkinstagram = isset($_POST["linkinstagram"]) ? $_POST["linkinstagram"] : "";
     $linkyoutube = isset($_POST["linkyoutube"]) ? $_POST["linkyoutube"] : "";
+    $foto = isset($_POST["foto"]) ? $_POST["foto"] : "";
 
-    $foto = "";
-    if(isset($_FILES["foto"]["name"]) && $_FILES["foto"]["name"] != ""){
-        $foto = time()."_".$_FILES["foto"]["name"]; // nombre único
-        $tmpFoto = $_FILES["foto"]["tmp_name"];
-        move_uploaded_file($tmpFoto, "../../img/".$foto);
-    }
-
-    $sentencia = $conn->prepare("INSERT INTO colaboradores (nombre, descripcion, linkfacebook, linkinstagram, linkyoutube, foto) 
+    $sentencia = $pdo->prepare("INSERT INTO chef (nombre, descripcion, linkfacebook, linkinstagram, linkyoutube, foto) 
                                 VALUES (:nombre, :descripcion, :linkfacebook, :linkinstagram, :linkyoutube, :foto);");
 
     $sentencia->bindParam(":nombre" , $nombre);
@@ -45,7 +39,7 @@ if($_POST){
             <div class="card">
                 <div class="card-header">Agregar Chef</div>
                 <div class="card-body">
-                    <form action="" method="POST" enctype="multipart/form-data">
+                    <form action="" method="POST">
                         
                         <div class="mb-3">
                             <label class="form-label">Nombre:</label>
@@ -74,7 +68,7 @@ if($_POST){
 
                         <div class="mb-3">
                             <label class="form-label">Foto:</label>
-                            <input type="file" class="form-control" name="foto" placeholder="Nombre o ruta de la foto" required>
+                            <input type="text" class="form-control" name="foto" placeholder="Nombre o ruta de la foto" required>
                         </div>
 
                         <button type="submit" class="btn btn-success">Crear Chef</button>

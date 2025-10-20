@@ -1,61 +1,103 @@
 <?php
 include("../../bd.php");
-include("../../templates/header.php");
+$sentencia=$pdo->prepare("SELECT * FROM testimonios;");
+$sentencia->execute();
+$resultado=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
-if($_POST){
-    $usuario = isset($_POST["usuario"]) ? $_POST["usuario"] : "";
-    $password = isset($_POST["password"]) ? $_POST["password"] : "";
-    $correo   = isset($_POST["correo"]) ? $_POST["correo"] : "";
+if(isset($_GET["txtID"])){
+    $txtID=(isset($_GET["txtID"]))?$_GET["txtID"]:"";
 
+    $borrar=$pdo->prepare("DELETE FROM testimonios WHERE id=:id");
     
-    $sentencia = $conn->prepare("INSERT INTO usuarios (usuario, password, correo) 
-                                VALUES (:usuario, :password, :correo);");
-
-    $sentencia->bindParam(":usuario", $usuario);
-    $sentencia->bindParam(":password", $password);
-    $sentencia->bindParam(":correo", $correo);
-    
-    $sentencia->execute();
+    $borrar->bindParam(":id", $txtID);
+    $borrar->execute();
     header("Location:index.php");
 }
 ?>
 
 <!doctype html>
-<html lang="es">
-    <head>
-        <title>Crear Usuario</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    </head>
+<html lang="en">
 
-    <body>
-        <main>
+<head>
+    <title>banner</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <header>
+        <?php include("../../templates/header.php"); ?>
+    </header>
+    <main>
+        <section class="container">
             <div class="card">
-                <div class="card-header">Nuevo Usuario</div>
-                <div class="card-body">
-                    <form action="" method="POST">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Usuario:</label>
-                            <input type="text" class="form-control" name="usuario" placeholder="Escriba el nombre de usuario" required>
-                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Correo:</label>
-                            <input type="email" class="form-control" name="correo" placeholder="ejemplo@correo.com" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña:</label>
-                            <input type="password" class="form-control" name="password" placeholder="Escriba la contraseña" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Crear Usuario</button>
-                        <a class="btn btn-primary" href="index.php" role="button">Cancelar</a>
-                    </form>
+                <div class="card-header">
+                    <a name="" id="" class="btn btn-primary" href="crear.php" role="button">Agregar registros</a>
                 </div>
+                <div class="card-body">
+                    <div
+                        class="table-responsive-sm">
+                        <table
+                            class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Opinion</th>
+                                    <th scope="col">nombre</th>
+                                    <th scope="col">Fecha reseña</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($resultado as $key => $value):?>
+                                <tr class="">
+                                    <td><?php echo $value["id"];?></td>
+                                    <td><?php echo $value["opinion"];?></td>
+                                    <td><?php echo $value["nombre"];?></td>
+                                    <td><?php echo $value["fecha_insercion"];?></td>
+                                    
+                                    <td>
+                                        <a name="" id="" class="btn btn-info" href="editar.php?txtID=<?php echo $value["id"]; ?>" role="button">Editar</a>
+                                        <a name="" id="" class="btn btn-danger" href="index.php?txtID= <?php echo $value["id"];?>" role="button">Borrar</a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="card-footer text-muted"></div>
+
             </div>
-        </main>
-    </body>
+        </section>
+
+    </main>
+    <footer>
+        <!-- place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+
 </html>

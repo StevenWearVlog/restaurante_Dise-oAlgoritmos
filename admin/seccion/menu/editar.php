@@ -3,14 +3,41 @@ include("../../templates/header.php");
 include("../../bd.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = isset($_POST['id']) ? $_POST['id'] : "";
-    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : "";
-    $ingredientes = isset($_POST['ingredientes']) ? $_POST['ingredientes'] : "";
-    $precio = isset($_POST['precio']) ? $_POST['precio'] : "";
-    $foto = isset($_POST['foto']) ? $_POST['foto'] : "";
+    $id = $_POST['id'] ?? "";
+    $nombre = trim($_POST['nombre'] ?? "");
+    $ingredientes = trim($_POST['ingredientes'] ?? "");
+    $precio = $_POST['precio'] ?? "";
 
-    try {
-        $stmt = $conn->prepare("UPDATE menu 
+    if ($id && $nombre && $ingredientes && is_numeric($precio) && $precio > 0) {
+        $carpetaServidor = __DIR__ . "/../../../uploads/menu/";
+        $carpetaWeb = "uploads/menu/";
+
+        if (!file_exists($carpetaServidor)) {
+            mkdir($carpetaServidor, 0777, true);
+        }
+
+        $query = $pdo->prepare("SELECT foto FROM menu WHERE id = :id");
+        $query->bindParam(':id', $id);
+        $query->execute();
+        $oldData = $query->fetch(PDO::FETCH_ASSOC);
+        $oldImagePath = $oldData ? $oldData['foto'] : null;
+
+        $rutaFoto = $oldImagePath;
+
+        if (!empty($_FILES['foto']['tmp_name']) && $_FILES['foto']['error'] === 0) {
+            $nombreArchivo = time() . "_" . basename($_FILES['foto']['name']);
+            $rutaDestinoServidor = $carpetaServidor . $nombreArchivo;
+            $rutaDestinoWeb = $carpetaWeb . $nombreArchivo;
+
+            if (move_uploaded_file($_FILES["foto"]["tmp_name"], $rutaDestinoServidor)) {
+                $rutaFoto = $rutaDestinoWeb;
+                if ($oldImagePath && file_exists(__DIR__ . "/../../../" . $oldImagePath)) {
+                    unlink(__DIR__ . "/../../../" . $oldImagePath);
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("UPDATE menu 
                                SET nombre = :nombre, 
                                    ingredientes = :ingredientes, 
                                    precio = :precio, 
@@ -19,27 +46,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':nombre', $nombre);
         $stmt->bindParam(':ingredientes', $ingredientes);
         $stmt->bindParam(':precio', $precio);
-        $stmt->bindParam(':foto', $foto);
+        $stmt->bindParam(':foto', $rutaFoto);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
 
         header("Location: index.php");
         exit;
-    } catch (PDOException $e) {
-        echo "Error al actualizar: " . $e->getMessage();
     }
 }
 
-$id = isset($_GET['txtID']) ? $_GET['txtID'] : '';
+$id = $_GET['txtID'] ?? '';
 $nombre = $ingredientes = $foto = "";
 $precio = "";
 
 if ($id) {
-    $select = $conn->prepare("SELECT * FROM menu WHERE id = :id");
+    $select = $pdo->prepare("SELECT * FROM menu WHERE id = :id");
     $select->bindParam(':id', $id);
     $select->execute();
     $row = $select->fetch(PDO::FETCH_ASSOC);
-
     if ($row) {
         $nombre = $row['nombre'];
         $ingredientes = $row['ingredientes'];
@@ -58,52 +82,54 @@ if ($id) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-    <main>
-        <br>
-        <div class="card">
-            <div class="card-header">Editar Plato del Menú</div>
-            <div class="card-body">
-                <form action="" method="post">
-                   
-                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
+<main class="container mt-4">
+    <div class="card">
+        <div class="card-header">Editar Plato del Menú</div>
+        <div class="card-body">
+            <form action="" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
-                    <div class="mb-3">
-                        <label class="form-label">Nombre del Plato:</label>
-                        <input type="text" class="form-control" name="nombre"
-                               value="<?php echo htmlspecialchars($nombre); ?>"
-                               placeholder="Ejemplo: Pasta Alfredo" required>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre del Plato:</label>
+                    <input type="text" class="form-control" name="nombre"
+                           value="<?php echo htmlspecialchars($nombre); ?>" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Ingredientes:</label>
-                        <input type="text" class="form-control" name="ingredientes"
-                               value="<?php echo htmlspecialchars($ingredientes); ?>"
-                               placeholder="Ejemplo: Pasta, crema, queso parmesano" required>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Ingredientes:</label>
+                    <input type="text" class="form-control" name="ingredientes"
+                           value="<?php echo htmlspecialchars($ingredientes); ?>" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Precio:</label>
-                        <input type="number" class="form-control" name="precio"
-                               value="<?php echo htmlspecialchars($precio); ?>"
-                               placeholder="Ejemplo: 25000" required>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Precio:</label>
+                    <input type="number" class="form-control" name="precio"
+                           value="<?php echo htmlspecialchars($precio); ?>" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Foto (URL):</label>
-                        <input type="text" class="form-control" name="foto"
-                               value="<?php echo htmlspecialchars($foto); ?>"
-                               placeholder="Ejemplo: https://midominio.com/imagenes/pasta.jpg" required>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Imagen actual:</label><br>
+                    <?php if ($foto): ?>
+                        <img src="/restaurant/<?php echo htmlspecialchars($foto); ?>" width="150" class="img-thumbnail mb-2">
+                    <?php else: ?>
+                        <p class="text-muted">Sin imagen</p>
+                    <?php endif; ?>
+                </div>
 
-                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                    <a class="btn btn-primary" href="index.php" role="button">Cancelar</a>
-                </form>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Cambiar Imagen:</label>
+                    <input type="file" class="form-control" name="foto" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                <a class="btn btn-primary" href="index.php">Cancelar</a>
+            </form>
         </div>
-    </main>
+    </div>
+</main>
 
-    <footer>
-        <?php include("../../templates/footer.php"); ?>
-    </footer>
+<footer>
+    <?php include("../../templates/footer.php"); ?>
+</footer>
 </body>
 </html>

@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "<div class='alert alert-danger'>Por favor complete todos los campos.</div>";
     } else {
 
-        $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE usuario = :usuario LIMIT 1");
         $stmt->bindParam(":usuario", $usuario);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);

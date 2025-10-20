@@ -1,13 +1,13 @@
 <?php
 include("../../bd.php");
-$sentencia=$conn->prepare("SELECT * FROM mensaje;");
+$sentencia=$pdo->prepare("SELECT * FROM mensaje;");
 $sentencia->execute();
 $resultado=$sentencia->fetchAll(PDO::FETCH_ASSOC);
 
 if(isset($_GET["txtID"])){
     $txtID=(isset($_GET["txtID"]))?$_GET["txtID"]:"";
 
-    $borrar=$conn->prepare("DELETE FROM mensaje WHERE id=:id");
+    $borrar=$pdo->prepare("DELETE FROM mensaje WHERE id=:id");
     
     $borrar->bindParam(":id", $txtID);
     $borrar->execute();
@@ -32,6 +32,7 @@ if(isset($_GET["txtID"])){
         rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
         crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 
 <body>

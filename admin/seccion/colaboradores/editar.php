@@ -12,28 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $linkyoutube = isset($_POST['linkyoutube']) ? $_POST['linkyoutube'] : "";
     $foto = isset($_POST['foto']) ? $_POST['foto'] : "";
 
-    // Buscar foto actual
-    $stmt = $conn->prepare("SELECT foto FROM colaboradores WHERE id=:id");
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
-    $registro = $stmt->fetch(PDO::FETCH_ASSOC);
-    $fotoActual = $registro["foto"];
-
-    // Manejo de nueva foto
-    $foto = $fotoActual;
-    if(isset($_FILES["foto"]["name"]) && $_FILES["foto"]["name"] != ""){
-        $foto = time()."_".$_FILES["foto"]["name"];
-        $tmpFoto = $_FILES["foto"]["tmp_name"];
-        move_uploaded_file($tmpFoto, "../../img/".$foto);
-
-        // Borrar foto anterior si existía
-        if($fotoActual != "" && file_exists("../../img/".$fotoActual)){
-            unlink("../../img/".$fotoActual);
-        }
-    }
-
     try {
-        $stmt = $conn->prepare("UPDATE colaboradores 
+        $stmt = $pdo->prepare("UPDATE chef 
                                SET nombre = :nombre, 
                                    descripcion = :descripcion, 
                                    linkfacebook = :linkfacebook, 
@@ -57,22 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// 2) Si no es POST, cargar los datos actuales del chef por GET txtID
 $id = isset($_GET['txtID']) ? $_GET['txtID'] : '';
 $nombre = $descripcion = $linkfacebook = $linkinstagram = $linkyoutube = $foto = "";
 
 if ($id) {
-    $select = $conn->prepare("SELECT * FROM colaboradores WHERE id = :id");
+    $select = $pdo->prepare("SELECT * FROM chef WHERE id = :id");
     $select->bindParam(':id', $id);
     $select->execute();
-    $colaboradores = $select->fetch(PDO::FETCH_ASSOC);
+    $chef = $select->fetch(PDO::FETCH_ASSOC);
 
-    if ($colaboradores) {
-        $nombre = $colaboradores['nombre'];
-        $descripcion = $colaboradores['descripcion'];
-        $linkfacebook = $colaboradores['linkfacebook'];
-        $linkinstagram = $colaboradores['linkinstagram'];
-        $linkyoutube = $colaboradores['linkyoutube'];
-        $foto = $colaboradores['foto'];
+    if ($chef) {
+        $nombre = $chef['nombre'];
+        $descripcion = $chef['descripcion'];
+        $linkfacebook = $chef['linkfacebook'];
+        $linkinstagram = $chef['linkinstagram'];
+        $linkyoutube = $chef['linkyoutube'];
+        $foto = $chef['foto'];
     }
 }
 ?>
@@ -91,7 +72,7 @@ if ($id) {
         <div class="card">
             <div class="card-header">Editar Chef</div>
             <div class="card-body">
-                <form action="" method="post" enctype="multipart/form-data">
+                <form action="" method="post">
                     <!-- id oculto -->
                     <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
@@ -132,7 +113,8 @@ if ($id) {
 
                     <div class="mb-3">
                         <label class="form-label">Foto:</label>
-                        <input type="file" class="form-control" name="foto"
+                        <input type="text" class="form-control" name="foto"
+                               value="<?php echo htmlspecialchars($foto); ?>"
                                placeholder="Nombre o ruta del archivo de la foto (ej. chef.jpg)">
                     </div>
 

@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : "";
 
     try {
-        $stmt = $conn->prepare("UPDATE testimonios 
+        $stmt = $pdo->prepare("UPDATE testimonios 
                                SET opinion = :opinion, 
                                    nombre = :nombre 
                                WHERE id = :id");

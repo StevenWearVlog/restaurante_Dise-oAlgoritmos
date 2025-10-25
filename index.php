@@ -55,40 +55,37 @@ foreach ($reservasActivas as $reserva) {
 
 
 // arbol
-
 $arbol = [
-    "pregunta" => "¿Te sientes con buen ánimo hoy?",
-    "si" => [
-        "pregunta" => "¿Tienes mucha energía?",
-        "si" => [
-            "pregunta" => "¿Prefieres algo salado?",
-            "si" => ["sugerencia" => "Carne asada con papas y jugo natural"],
-            "no" => ["sugerencia" => "Ensalada fresca con frutas y agua de coco"]
+    "pregunta" => "¿Te gustaría comer algo liviano o contundente?",
+    "liviano" => [
+        "pregunta" => "¿Prefieres algo frío o caliente?",
+        "frío" => [
+            "pregunta" => "¿Quieres algo dulce?",
+            "si" => ["sugerencia" => "Yogurt con frutas y miel"],
+            "no" => ["sugerencia" => "Ensalada de atún con limonada"]
         ],
-        "no" => [
-            "pregunta" => "¿Te gustaría algo ligero?",
-            "si" => ["sugerencia" => "Wrap de pollo con jugo natural"],
-            "no" => ["sugerencia" => "Pasta al pesto con pan de ajo"]
+        "caliente" => [
+            "pregunta" => "¿Te gustaría algo vegetariano?",
+            "si" => ["sugerencia" => "Crema de espinaca con pan artesanal"],
+            "no" => ["sugerencia" => "Sopa de pollo con arroz integral"]
         ]
     ],
-    "no" => [
-        "pregunta" => "¿Te sientes estresado?",
-        "si" => [
-            "pregunta" => "¿Quieres algo dulce?",
-            "si" => ["sugerencia" => "Postre de chocolate o tiramisú"],
-            "no" => ["sugerencia" => "Sopa de tomate con queso fundido"]
+    "contundente" => [
+        "pregunta" => "¿Quieres carne, pollo o pescado?",
+        "carne" => [
+            "sugerencia" => "Lomo en salsa de champiñones con puré"
         ],
-        "no" => [
-            "pregunta" => "¿Tienes hambre pero estás cansado?",
-            "si" => ["sugerencia" => "Pasta cremosa con champiñones"],
-            "no" => ["sugerencia" => "Sopa caliente de verduras"]
+        "pollo" => [
+            "sugerencia" => "Pechuga a la plancha con papas criollas"
+        ],
+        "pescado" => [
+            "sugerencia" => "Filete de salmón con ensalada verde"
         ]
     ]
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     if (!isset($_SESSION['nodo'])) $_SESSION['nodo'] = $arbol;
-
     $nodoActual = $_SESSION['nodo'];
     $accion = $_POST['accion'];
 
@@ -96,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
         $_SESSION['nodo'] = $arbol;
         $nodoActual = $_SESSION['nodo'];
     } elseif ($accion === 'respuesta' && isset($_POST['respuesta'])) {
-        $respuesta = $_POST['respuesta'];
-        if (isset($nodoActual[$respuesta])) {
-            $_SESSION['nodo'] = $nodoActual[$respuesta];
+        $resp = $_POST['respuesta'];
+        if (isset($nodoActual[$resp])) {
+            $_SESSION['nodo'] = $nodoActual[$resp];
             $nodoActual = $_SESSION['nodo'];
         }
     }
@@ -112,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     exit;
 }
 
-
 ?>
 
 
@@ -120,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>Restaurante Steven</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
@@ -342,62 +338,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     </div>
 </section>
 
+<!-- SECCIÓN ÁRBOL -->
 <section id="sugerencias" class="container my-5">
     <h2 class="text-center mb-4">¿No sabes qué comer? Te ayudamos</h2>
     <div id="arbol" class="card p-4 text-center">
-        <p id="texto" class="fs-4">¿Te sientes con buen ánimo hoy?</p>
+        <p id="texto" class="fs-4">¿Te gustaría comer algo liviano o contundente?</p>
         <div id="botones">
-            <button class="btn btn-success mx-2" onclick="responder('si')">Sí</button>
-            <button class="btn btn-danger mx-2" onclick="responder('no')">No</button>
+            <button class="btn btn-success mx-2" onclick="responder('liviano')">Liviano</button>
+            <button class="btn btn-danger mx-2" onclick="responder('contundente')">Contundente</button>
         </div>
     </div>
 </section>
 
 <script>
-function responder(resp) {
-    const formData = new URLSearchParams();
-    formData.append('accion', 'respuesta');
-    formData.append('respuesta', resp);
+// ==========================
+// Árbol de Decisiones - Restaurante
+// ==========================
+const arbol = {
+    pregunta: "¿Te gustaría comer algo liviano o contundente?",
+    opciones: {
+        liviano: {
+            pregunta: "¿Prefieres algo frío o caliente?",
+            opciones: {
+                frío: {
+                    pregunta: "¿Quieres algo dulce o salado?",
+                    opciones: {
+                        dulce: { resultado: "Te recomendamos una ensalada de frutas o un batido natural 🍓" },
+                        salado: { resultado: "Te recomendamos una ensalada César o un wrap de pollo 🥗" }
+                    }
+                },
+                caliente: {
+                    pregunta: "¿Quieres algo rápido o elaborado?",
+                    opciones: {
+                        rápido: { resultado: "Prueba una sopa del día o una crema de verduras 🍵" },
+                        elaborado: { resultado: "Te recomendamos un filete de pescado al vapor con verduras 🐟" }
+                    }
+                }
+            }
+        },
+        contundente: {
+            pregunta: "¿Prefieres carne, pollo o pasta?",
+            opciones: {
+                carne: {
+                    pregunta: "¿La prefieres asada o en salsa?",
+                    opciones: {
+                        asada: { resultado: "Prueba nuestra bandeja paisa o un churrasco con papas 🍖" },
+                        salsa: { resultado: "Te recomendamos carne en salsa de champiñones o lomo al vino 🍷" }
+                    }
+                },
+                pollo: {
+                    pregunta: "¿Quieres algo frito o al horno?",
+                    opciones: {
+                        frito: { resultado: "Te recomendamos pollo apanado con papas fritas 🍗" },
+                        horno: { resultado: "Prueba nuestro pollo al horno con arroz y ensalada 🥘" }
+                    }
+                },
+                pasta: {
+                    pregunta: "¿Prefieres con carne o vegetariana?",
+                    opciones: {
+                        carne: { resultado: "Te recomendamos espaguetis a la boloñesa 🍝" },
+                        vegetariana: { resultado: "Prueba una pasta al pesto con vegetales 🥦" }
+                    }
+                }
+            }
+        }
+    }
+};
 
-    fetch(window.location.pathname, {
-        method: 'POST',
-        body: formData
-    })
-    .then(r => r.json())
-    .then(data => actualizarVista(data))
-    .catch(() => alert('Error al comunicar con el servidor.'));
-}
+let nodoActual = arbol; // Nodo inicial del árbol
 
-function reiniciar() {
-    const formData = new URLSearchParams();
-    formData.append('accion', 'reiniciar');
+function responder(opcion) {
+    if (!nodoActual.opciones || !nodoActual.opciones[opcion]) {
+        document.getElementById("texto").textContent = "Opción no válida.";
+        return;
+    }
 
-    fetch(window.location.pathname, {
-        method: 'POST',
-        body: formData
-    })
-    .then(r => r.json())
-    .then(data => actualizarVista(data))
-    .catch(() => alert('Error al comunicar con el servidor.'));
-}
+    nodoActual = nodoActual.opciones[opcion];
 
-function actualizarVista(data) {
-    const texto = document.getElementById('texto');
-    const botones = document.getElementById('botones');
-
-    if (data.sugerencia) {
-        texto.textContent = data.sugerencia;
-        botones.innerHTML = `<button class="btn btn-secondary" onclick="reiniciar()">Volver a empezar</button>`;
-    } else if (data.pregunta) {
-        texto.textContent = data.pregunta;
-        botones.innerHTML = `
-            <button class="btn btn-success mx-2" onclick="responder('si')">Sí</button>
-            <button class="btn btn-danger mx-2" onclick="responder('no')">No</button>
+    // Si es una pregunta, mostramos nuevas opciones
+    if (nodoActual.pregunta) {
+        document.getElementById("texto").textContent = nodoActual.pregunta;
+        mostrarBotones(Object.keys(nodoActual.opciones));
+    } 
+    // Si ya hay resultado, mostramos la recomendación
+    else if (nodoActual.resultado) {
+        document.getElementById("texto").textContent = nodoActual.resultado;
+        document.getElementById("botones").innerHTML = `
+            <button class="btn btn-primary mt-3" onclick="reiniciarArbol()">Volver a empezar 🔁</button>
         `;
     }
 }
-</script>
 
+function mostrarBotones(opciones) {
+    const contenedor = document.getElementById("botones");
+    contenedor.innerHTML = ""; // Limpiamos botones anteriores
+    opciones.forEach(op => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-outline-success mx-2";
+        btn.textContent = op.charAt(0).toUpperCase() + op.slice(1);
+        btn.onclick = () => responder(op);
+        contenedor.appendChild(btn);
+    });
+}
+
+function reiniciarArbol() {
+    nodoActual = arbol;
+    document.getElementById("texto").textContent = arbol.pregunta;
+    mostrarBotones(Object.keys(arbol.opciones));
+}
+</script>
 
 
 

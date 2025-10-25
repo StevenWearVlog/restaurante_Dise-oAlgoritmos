@@ -111,6 +111,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
 
 ?>
 
+<?php
+// ----- PILA -----
+class PilaPedidos {
+    public function apilar($pedido) {
+        $_SESSION['pila'][] = $pedido;
+    }
+    public function desapilar() {
+        array_pop($_SESSION['pila']);
+    }
+    public function obtenerPila() {
+        return array_reverse($_SESSION['pila'] ?? []);
+    }
+}
+
+// ----- COLA -----
+class ColaPedidos {
+    public function encolar($pedido) {
+        $_SESSION['cola'][] = $pedido;
+    }
+    public function desencolar() {
+        if (!empty($_SESSION['cola'])) array_shift($_SESSION['cola']);
+    }
+    public function obtenerCola() {
+        return $_SESSION['cola'] ?? [];
+    }
+}
+
+// ----- ARREGLO -----
+class PlatosVendidos {
+    public function agregar($plato) {
+        $_SESSION['arreglo'][] = $plato;
+        sort($_SESSION['arreglo']);
+    }
+    public function eliminar($plato) {
+        if (isset($_SESSION['arreglo'])) {
+            $_SESSION['arreglo'] = array_diff($_SESSION['arreglo'], [$plato]);
+        }
+    }
+    public function obtener() {
+        return $_SESSION['arreglo'] ?? [];
+    }
+}
+
+/* ==========================================================
+   ⚡ INICIALIZAR SESIONES SI ESTÁN VACÍAS
+========================================================== */
+if (!isset($_SESSION['pila'])) $_SESSION['pila'] = [];
+if (!isset($_SESSION['cola'])) $_SESSION['cola'] = [];
+if (!isset($_SESSION['arreglo'])) $_SESSION['arreglo'] = [
+    "Bandeja paisa",
+    "Pasta al pesto",
+    "Lomo en salsa",
+    "Pollo apanado"
+];
+
+/* ==========================================================
+   🧠 INSTANCIAS
+========================================================== */
+$pila = new PilaPedidos();
+$cola = new ColaPedidos();
+$arreglo = new PlatosVendidos();
+
+/* ==========================================================
+   🧭 MANEJO DE FORMULARIOS
+========================================================== */
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['accion'])) {
+        $accion = $_POST['accion'];
+        $dato = trim($_POST['dato'] ?? '');
+
+        switch ($accion) {
+            case 'apilar': if ($dato) $pila->apilar($dato); break;
+            case 'desapilar': $pila->desapilar(); break;
+
+            case 'encolar': if ($dato) $cola->encolar($dato); break;
+            case 'desencolar': $cola->desencolar(); break;
+
+            case 'agregar_plato': if ($dato) $arreglo->agregar($dato); break;
+            case 'eliminar_plato': if ($dato) $arreglo->eliminar($dato); break;
+
+            case 'reiniciar': session_destroy(); header("Location: index.php"); exit;
+        }
+    }
+    header("Location: index.php");
+    exit;
+}
+
+/* ==========================================================
+   📦 OBTENER DATOS
+========================================================== */
+$historialPedidos = $pila->obtenerPila();
+$pedidosEnCola = $cola->obtenerCola();
+$platosVendidos = $arreglo->obtener();
+?>
 
 <!doctype html>
 <html lang="en">
@@ -405,6 +499,8 @@ const arbol = {
     }
 };
 
+
+
 let nodoActual = arbol; // Nodo inicial del árbol
 
 function responder(opcion) {
@@ -469,6 +565,121 @@ function reiniciarArbol() {
         </div>
 
     </section>
+
+<?php
+// index.php
+?>
+
+  <!-- ========================== -->
+  <!-- 🔹 PILA -->
+  <!-- ========================== -->
+  <section id="pila" class="ms-4 mt-4">
+    <h2 class="text-center mb-3">🧱 Pila (Platos Apilados)</h2>
+    <div class="card p-4 text-center">
+      <input type="text" id="pilaInput" class="form-control mb-3" placeholder="Agregar plato a la pila">
+      <div>
+        <button class="btn btn-primary mx-2" onclick="pushPila()">Apilar</button>
+        <button class="btn btn-danger mx-2" onclick="popPila()">Desapilar</button>
+        <button class="btn btn-secondary mx-2" onclick="limpiarPila()">Vaciar pila</button>
+      </div>
+      <div id="pilaContenido" class="output-box mt-3">La pila está vacía.</div>
+    </div>
+  </section>
+
+  <!-- ========================== -->
+  <!-- 🔹 COLA -->
+  <!-- ========================== -->
+  <section id="cola" class="ms-4 mt-4">
+    <h2 class="text-center mb-3">🚶‍♂️ Cola (Clientes esperando)</h2>
+    <div class="card p-4 text-center">
+      <input type="text" id="colaInput" class="form-control mb-3" placeholder="Agregar cliente a la cola">
+      <div>
+        <button class="btn btn-success mx-2" onclick="enqueue()">Encolar</button>
+        <button class="btn btn-danger mx-2" onclick="dequeue()">Desencolar</button>
+        <button class="btn btn-secondary mx-2" onclick="limpiarCola()">Vaciar cola</button>
+      </div>
+      <div id="colaContenido" class="output-box mt-3">No hay clientes en espera.</div>
+    </div>
+  </section>
+
+
+  <script>
+  // =========================================
+  // 🔹 PILA (LIFO)
+  // =========================================
+  let pila = [];
+
+  function pushPila() {
+    const plato = document.getElementById("pilaInput").value.trim();
+    if (plato) {
+      pila.push(plato);
+      document.getElementById("pilaInput").value = "";
+      actualizarPila();
+    } else {
+      alert("⚠️ Ingresa un nombre de plato para apilar.");
+    }
+  }
+
+  function popPila() {
+    if (pila.length > 0) {
+      const eliminado = pila.pop();
+      alert(`🍽️ Se desapiló: ${eliminado}`);
+    } else {
+      alert("⚠️ La pila está vacía.");
+    }
+    actualizarPila();
+  }
+
+  function limpiarPila() {
+    pila = [];
+    actualizarPila();
+  }
+
+  function actualizarPila() {
+    const cont = document.getElementById("pilaContenido");
+    cont.innerHTML = pila.length
+      ? "<strong>Platos en la pila (de abajo hacia arriba):</strong><br>" + pila.join(" 🍽️<br>")
+      : "La pila está vacía.";
+  }
+
+  let cola = [];
+
+  function enqueue() {
+    const cliente = document.getElementById("colaInput").value.trim();
+    if (cliente) {
+      cola.push(cliente);
+      document.getElementById("colaInput").value = "";
+      actualizarCola();
+    } else {
+      alert("⚠️ Ingresa un nombre de cliente para encolar.");
+    }
+  }
+
+  function dequeue() {
+    if (cola.length > 0) {
+      const atendido = cola.shift();
+      alert(`✅ Se atendió a: ${atendido}`);
+    } else {
+      alert("⚠️ No hay clientes en la cola.");
+    }
+    actualizarCola();
+  }
+
+  function limpiarCola() {
+    cola = [];
+    actualizarCola();
+  }
+
+  function actualizarCola() {
+    const cont = document.getElementById("colaContenido");
+    cont.innerHTML = cola.length
+      ? "<strong>Clientes en espera:</strong><br>" + cola.join(" 🧍‍♂️ → ")
+      : "No hay clientes en espera.";
+  }
+
+  </script>
+
+
 
 
     <section id="mapa-mesas" class="container mt-5">

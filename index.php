@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark md-auto">
         <div class="container">
 
-            <a class="navbar-brand" href="#">RESTAURANTE <img src="images/re.svg" alt="egg" style="width:40px"></a>
+            <a class="navbar-brand" href="#">RESTAURANTE STEVEN</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
                     </li>
 
                 </ul>
-
+                <a href="admin/login.php"><button>Iniciar sesion</button></a>
             </div>
 
         </div>

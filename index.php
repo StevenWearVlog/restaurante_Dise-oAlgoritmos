@@ -53,6 +53,50 @@ foreach ($reservasActivas as $reserva) {
     $mesasArray[$fila][$col] = 1;
 }
 
+class GrafoRestaurante {
+    public $grafo = [];
+
+    public function __construct() {
+        $this->grafo = [
+            "Cocina" => ["Barra", "Bodega"],
+            "Barra" => ["Cocina", "Mesas", "Caja"],
+            "Mesas" => ["Barra", "Caja", "Salida"],
+            "Bodega" => ["Cocina"],
+            "Caja" => ["Barra", "Mesas", "Salida"],
+            "Salida" => ["Mesas", "Caja"]
+        ];
+    }
+
+    // Obtener las conexiones de un nodo
+    public function obtenerVecinos($zona) {
+        return $this->grafo[$zona] ?? [];
+    }
+
+    // Algoritmo BFS: encuentra ruta más corta entre dos puntos
+    public function rutaMasCorta($inicio, $fin) {
+        if (!isset($this->grafo[$inicio]) || !isset($this->grafo[$fin])) return null;
+
+        $cola = [[$inicio]];
+        $visitados = [$inicio];
+
+        while (!empty($cola)) {
+            $ruta = array_shift($cola);
+            $ultimo = end($ruta);
+
+            if ($ultimo === $fin) return $ruta;
+
+            foreach ($this->grafo[$ultimo] as $vecino) {
+                if (!in_array($vecino, $visitados)) {
+                    $visitados[] = $vecino;
+                    $nuevaRuta = $ruta;
+                    $nuevaRuta[] = $vecino;
+                    $cola[] = $nuevaRuta;
+                }
+            }
+        }
+        return null;
+    }
+}
 
 // arbol
 $arbol = [
@@ -171,7 +215,7 @@ if (!isset($_SESSION['arreglo'])) $_SESSION['arreglo'] = [
 ========================================================== */
 $pila = new PilaPedidos();
 $cola = new ColaPedidos();
-$arreglo = new PlatosVendidos();
+$grafo = new GrafoRestaurante();
 
 /* ==========================================================
    🧭 MANEJO DE FORMULARIOS
@@ -203,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ========================================================== */
 $historialPedidos = $pila->obtenerPila();
 $pedidosEnCola = $cola->obtenerCola();
-$platosVendidos = $arreglo->obtener();
+
 ?>
 
 <!doctype html>
@@ -279,7 +323,7 @@ $platosVendidos = $arreglo->obtener();
     </nav>
 
     <section id="banner" class="container-fluid p-0">
-        <div class="banner-img" style="position:relative; background:url('images/stake2.jpg') center/cover no-repeat; height: 400px;">
+        <div class="banner-img" style="position:relative; background:url('images/banners.jpg') center/cover no-repeat; height: 400px;">
             <div class="banner-text" style="position:absolute; top:50%; left: 50%; transform:translate(-50%, -50%); text-align:center;">
                 <?php foreach ($listaBanner as $banner): ?>
 
@@ -602,6 +646,33 @@ function reiniciarArbol() {
     </div>
   </section>
 
+    <!-- ========================== -->
+  <!-- 🕸️ GRAFO -->
+  <!-- ========================== -->
+  <section id="grafo" class="mb-5">
+    <h2 class="text-center mb-3">🗺️ Rutas del Restaurante (Grafo)</h2>
+    <div class="card p-4 text-center">
+      <p>Selecciona dos zonas del restaurante para ver la ruta más corta.</p>
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-4">
+          <select id="inicio" class="form-select">
+            <option disabled selected>Zona inicial</option>
+            <option>Cocina</option><option>Barra</option><option>Mesas</option><option>Bodega</option><option>Caja</option><option>Salida</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <select id="fin" class="form-select">
+            <option disabled selected>Zona final</option>
+            <option>Cocina</option><option>Barra</option><option>Mesas</option><option>Bodega</option><option>Caja</option><option>Salida</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="buscarRuta()">Calcular ruta 🧭</button>
+      <div id="rutaResultado" class="output-box mt-3">Selecciona los puntos para ver el camino.</div>
+    </div>
+  </section>
+</div>
+
 
   <script>
   // =========================================
@@ -676,6 +747,47 @@ function reiniciarArbol() {
       ? "<strong>Clientes en espera:</strong><br>" + cola.join(" 🧍‍♂️ → ")
       : "No hay clientes en espera.";
   }
+
+  const grafo = {
+  "Cocina": ["Barra", "Bodega"],
+  "Barra": ["Cocina", "Mesas", "Caja"],
+  "Mesas": ["Barra", "Caja", "Salida"],
+  "Bodega": ["Cocina"],
+  "Caja": ["Barra", "Mesas", "Salida"],
+  "Salida": ["Mesas", "Caja"]
+};
+
+function buscarRuta() {
+  const inicio = document.getElementById("inicio").value;
+  const fin = document.getElementById("fin").value;
+  if (!inicio || !fin || inicio === fin) {
+    document.getElementById("rutaResultado").innerHTML = "⚠️ Selecciona dos zonas distintas.";
+    return;
+  }
+
+  const ruta = bfs(grafo, inicio, fin);
+  document.getElementById("rutaResultado").innerHTML =
+    ruta ? `🚶‍♂️ Ruta más corta: <strong>${ruta.join(" → ")}</strong>` :
+    "❌ No existe conexión entre esas zonas.";
+}
+
+// Algoritmo BFS en JS
+function bfs(grafo, inicio, fin) {
+  const cola = [[inicio]];
+  const visitados = new Set([inicio]);
+  while (cola.length) {
+    const ruta = cola.shift();
+    const nodo = ruta[ruta.length - 1];
+    if (nodo === fin) return ruta;
+    for (const vecino of grafo[nodo] || []) {
+      if (!visitados.has(vecino)) {
+        visitados.add(vecino);
+        cola.push([...ruta, vecino]);
+      }
+    }
+  }
+  return null;
+}
 
   </script>
 

@@ -564,7 +564,7 @@ function responder(opcion) {
     else if (nodoActual.resultado) {
         document.getElementById("texto").textContent = nodoActual.resultado;
         document.getElementById("botones").innerHTML = `
-            <button class="btn btn-primary mt-3" onclick="reiniciarArbol()">Volver a empezar 🔁</button>
+            <button class="btn btn-primary mt-3" onclick="reiniciarArbol()">Volver a empezar </button>
         `;
     }
 }
@@ -618,7 +618,7 @@ function reiniciarArbol() {
   <!-- 🔹 PILA -->
   <!-- ========================== -->
   <section id="pila" class="ms-4 mt-4">
-    <h2 class="text-center mb-3">🧱 Pila (Platos Apilados)</h2>
+    <h2 class="text-center mb-3">Pila (Platos Apilados)</h2>
     <div class="card p-4 text-center">
       <input type="text" id="pilaInput" class="form-control mb-3" placeholder="Agregar plato a la pila">
       <div>
@@ -634,7 +634,7 @@ function reiniciarArbol() {
   <!-- 🔹 COLA -->
   <!-- ========================== -->
   <section id="cola" class="ms-4 mt-4">
-    <h2 class="text-center mb-3">🚶‍♂️ Cola (Clientes esperando)</h2>
+    <h2 class="text-center mb-3">Cola (Clientes esperando)</h2>
     <div class="card p-4 text-center">
       <input type="text" id="colaInput" class="form-control mb-3" placeholder="Agregar cliente a la cola">
       <div>
@@ -649,8 +649,8 @@ function reiniciarArbol() {
     <!-- ========================== -->
   <!-- 🕸️ GRAFO -->
   <!-- ========================== -->
-  <section id="grafo" class="mb-5">
-    <h2 class="text-center mb-3">🗺️ Rutas del Restaurante (Grafo)</h2>
+  <section id="grafo" class="card p-4 mb-4">
+    <h2 class="text-center mb-3">Rutas del Restaurante</h2>
     <div class="card p-4 text-center">
       <p>Selecciona dos zonas del restaurante para ver la ruta más corta.</p>
       <div class="row justify-content-center mb-3">
@@ -667,11 +667,101 @@ function reiniciarArbol() {
           </select>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="buscarRuta()">Calcular ruta 🧭</button>
+      <button class="btn btn-primary" onclick="buscarRuta()">Calcular ruta</button>
       <div id="rutaResultado" class="output-box mt-3">Selecciona los puntos para ver el camino.</div>
     </div>
   </section>
+
+  <section id="algoritmos" class="container my-5">
+    <h2 class="text-center mb-4">Curiosidades de nuestro restaurante</h2>
+
+    <!-- ================== VORAZ ================== -->
+    <div class="card p-4 mb-4">
+        <h4>Vamos a elegir el mejor plato calidad precio de nuestro menu</h4>
+        <p>Selecciona siempre la mejor opción local: elegimos el plato con mejor relación calidad/precio.</p>
+        <button class="btn btn-primary" onclick="ejecutarVoraz()">Ejecutar Voraz</button>
+        <div id="resultadoVoraz" class="mt-3 text-success fw-bold"></div>
+    </div>
+
+    <!-- ================== ITERATIVO ================== -->
+    <div class="card p-4 mb-4">
+        <h4>Costo total del menú diario.</h4>
+        <p>Recorremos todos los platos para calcular el costo total del menú diario.</p>
+        <button class="btn btn-warning" onclick="ejecutarIterativo()">Ejecutar Iterativo</button>
+        <div id="resultadoIterativo" class="mt-3 text-success fw-bold"></div>
+    </div>
+
+    <!-- ================== RECURSIVIDAD ================== -->
+    <div class="card p-4 mb-4">
+        <h4>Escribe el numero de platos que crees que hay en  <br> el menu y sabras la cantidad de combinaciones posibles</h4>
+        <p>Calculamos la cantidad de combinaciones posibles de platos según el número de opciones disponibles.</p>
+        <input type="number" id="nPlatos" class="form-control w-25 mx-auto" placeholder="Número de platos" min="1">
+        <button class="btn btn-success mt-2" onclick="ejecutarRecursivo()">Calcular combinaciones</button>
+        <div id="resultadoRecursivo" class="mt-3 text-success fw-bold"></div>
+    </div>
+</section>
+
+<script>
+// ================== ALGORITMO VORAZ ==================
+function ejecutarVoraz() {
+    const platos = [
+        {nombre: "Carne asada", calidad: 9, precio: 25000},
+        {nombre: "Ensalada César", calidad: 7, precio: 12000},
+        {nombre: "Pasta al pesto", calidad: 8, precio: 18000},
+        {nombre: "Pollo BBQ", calidad: 9, precio: 20000}
+    ];
+
+    let mejor = platos[0];
+    let mejorRelacion = mejor.calidad / mejor.precio;
+
+    for (let i = 1; i < platos.length; i++) {
+        const relacion = platos[i].calidad / platos[i].precio;
+        if (relacion > mejorRelacion) {
+            mejor = platos[i];
+            mejorRelacion = relacion;
+        }
+    }
+
+    document.getElementById('resultadoVoraz').innerText =
+        `✅ El mejor plato según la relación calidad/precio es: ${mejor.nombre} ($${mejor.precio})`;
+}
+
+// ================== ALGORITMO ITERATIVO ==================
+function ejecutarIterativo() {
+    const precios = [25000, 18000, 15000, 20000, 12000];
+    let total = 0;
+
+    // Sumatoria iterativa
+    for (let i = 0; i < precios.length; i++) {
+        total += precios[i];
+    }
+
+    document.getElementById('resultadoIterativo').innerText =
+        `💰 El costo total del menú diario es de $${total}`;
+}
+
+// ================== RECURSIVIDAD ==================
+function factorial(n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+function ejecutarRecursivo() {
+    const n = parseInt(document.getElementById('nPlatos').value);
+    if (isNaN(n) || n < 1) {
+        document.getElementById('resultadoRecursivo').innerText =
+            "⚠️ Ingresa un número válido de platos (mínimo 1)";
+        return;
+    }
+
+    const combinaciones = factorial(n);
+    document.getElementById('resultadoRecursivo').innerText =
+        `🍽️ Existen ${combinaciones.toLocaleString()} combinaciones posibles de ${n} platos`;
+}
+</script>
 </div>
+
+
 
 
   <script>

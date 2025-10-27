@@ -10,11 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_numeric($precio) || $precio <= 0) {
         echo '<div class="alert alert-danger">Debes ingresar un precio válido.</div>';
     } else {
-        $precio = (int)$precio;
-
-        // Rutas
         $carpetaServidor = __DIR__ . "/../../../uploads/menu/";
-        $carpetaWeb = "uploads/menu/";
+        $carpetaWeb = "../../uploads/menu/"; // ← Ruta correcta para mostrar luego
 
         if (!file_exists($carpetaServidor)) {
             mkdir($carpetaServidor, 0777, true);
@@ -24,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rutaDestinoServidor = $carpetaServidor . $nombreImagen;
         $rutaDestinoWeb = $carpetaWeb . $nombreImagen;
 
-        // Verificar si hay un archivo y moverlo correctamente
         if (isset($_FILES["foto"]) && $_FILES["foto"]["error"] === 0) {
             if (move_uploaded_file($_FILES["foto"]["tmp_name"], $rutaDestinoServidor)) {
                 $sentencia = $pdo->prepare("
@@ -41,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header("Location: index.php");
                 exit;
             } else {
-                echo '<div class="alert alert-danger">Error al mover la imagen al destino.</div>';
+                echo '<div class="alert alert-danger">Error al subir la imagen.</div>';
             }
         } else {
             echo '<div class="alert alert-danger">No se recibió ninguna imagen válida.</div>';
@@ -49,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!doctype html>
 <html lang="es">
 <head>
@@ -67,17 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label class="form-label">Nombre del Platillo:</label>
-                    <input type="text" class="form-control" name="nombre" placeholder="Ejemplo: Pizza Margarita" required>
+                    <input type="text" class="form-control" name="nombre" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Ingredientes:</label>
-                    <input type="text" class="form-control" name="ingredientes" placeholder="Ejemplo: masa, queso, tomate" required>
+                    <input type="text" class="form-control" name="ingredientes" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Precio:</label>
-                    <input type="number" class="form-control" name="precio" placeholder="Ejemplo: 25000" min="1" required>
+                    <input type="number" class="form-control" name="precio" min="1" required>
                 </div>
 
                 <div class="mb-3">
@@ -86,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <button type="submit" class="btn btn-success">Agregar Platillo</button>
-                <a class="btn btn-primary" href="index.php" role="button">Cancelar</a>
+                <a class="btn btn-secondary" href="index.php">Cancelar</a>
             </form>
         </div>
     </div>

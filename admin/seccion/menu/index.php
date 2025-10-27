@@ -26,69 +26,65 @@ if (isset($_GET["txtID"])) {
 }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <title>Menú</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
 <header>
     <?php include("../../templates/header.php"); ?>
 </header>
-<main>
-    <section class="container mt-4">
-        <div class="card">
-            <div class="card-header">
-                <a class="btn btn-primary" href="crear.php" role="button">Agregar Platillo</a>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive-sm">
-                    <table class="table align-middle text-center">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Ingredientes</th>
-                                <th>Precio</th>
-                                <th>Foto</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($resultado as $value): ?>
-                            <tr>
-                                <td><?php echo $value["id"]; ?></td>
-                                <td><?php echo $value["nombre"]; ?></td>
-                                <td><?php echo $value["ingredientes"]; ?></td>
-                                <td><?php echo $value["precio"]; ?></td>
-                                <td>
-                                    <?php if ($value['foto'] && file_exists(__DIR__ . "/../../../" . $value['foto'])): ?>
-                                        <img src="/restaurant/<?php echo $value['foto']; ?>" alt="Foto del platillo" width="120" class="img-thumbnail">
-                                    <?php else: ?>
-                                        <span class="text-muted">Sin imagen</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a class="btn btn-info" href="editar.php?txtID=<?php echo $value["id"]; ?>">Editar</a>
-                                    <a class="btn btn-danger" href="index.php?txtID=<?php echo $value["id"]; ?>">Borrar</a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-footer text-muted"></div>
+
+<main class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <a class="btn btn-primary" href="crear.php">Agregar Platillo</a>
         </div>
-    </section>
+        <div class="card-body">
+            <div class="table-responsive-sm">
+                <table class="table text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Ingredientes</th>
+                            <th>Precio</th>
+                            <th>Foto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($resultado as $value): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($value["id"]) ?></td>
+                            <td><?= htmlspecialchars($value["nombre"]) ?></td>
+                            <td><?= htmlspecialchars($value["ingredientes"]) ?></td>
+                            <td>$<?= number_format($value["precio"], 0, ',', '.') ?></td>
+                            <td>
+                                <?php if ($value['foto'] && file_exists(__DIR__ . "/../../../" . $value['foto'])): ?>
+                                    <img src="<?php echo $value['foto']; ?>" width="120" class="img-thumbnail">
+                                <?php else: ?>
+                                    <span class="text-muted">Sin imagen</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="editar.php?txtID=<?= $value["id"] ?>" class="btn btn-info btn-sm">Editar</a>
+                                <a href="index.php?txtID=<?= $value["id"] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este platillo?')">Eliminar</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </main>
+
 <footer>
     <?php include("../../templates/footer.php"); ?>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

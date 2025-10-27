@@ -385,7 +385,7 @@ $pedidosEnCola = $cola->obtenerCola();
                                 <?php if (!empty($chef['linkinstagram'])): ?>
                                     <a href="<?php echo htmlspecialchars($chef['linkinstagram']); ?>"
                                         target="_blank" rel="noopener">
-                                        <img src="images/instagram.svg" alt="insta" style="width:24px">
+                                        <img src="images/instagram.png" alt="insta" style="width:24px">
                                     </a>
                                 <?php endif; ?>
 
@@ -399,7 +399,7 @@ $pedidosEnCola = $cola->obtenerCola();
                                 <?php if (!empty($chef['linkfacebook'])): ?>
                                     <a href="<?php echo htmlspecialchars($chef['linkfacebook']); ?>"
                                         target="_blank" rel="noopener">
-                                        <img src="images/facebook.svg" alt="face" style="width:24px">
+                                        <img src="images/facebook.png" alt="face" style="width:24px">
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -459,7 +459,8 @@ $pedidosEnCola = $cola->obtenerCola();
                 <div class="col d-flex justify-content-center">
                     <div class="card h-100">
                         <?php 
-                        $imgPath = $menu['foto'] ? "/restaurant/" . $menu['foto'] : "uploads/menu/default.jpg";
+                        $imgPath = !empty($menu['foto']) ? "admin/" . $menu['foto'] : "admin/uploads/menu/default.jpg";
+
                         ?>
                         <img src="<?php echo htmlspecialchars($imgPath); ?>" 
                              alt="<?php echo htmlspecialchars($menu['nombre']); ?>" 

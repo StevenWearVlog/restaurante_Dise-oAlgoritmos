@@ -110,7 +110,8 @@ if ($id) {
                 <div class="mb-3">
                     <label class="form-label">Imagen actual:</label><br>
                     <?php if ($foto): ?>
-                        <img src="/restaurant/<?php echo htmlspecialchars($foto); ?>" width="150" class="img-thumbnail mb-2">
+                        <img src="<?php echo $foto; ?>" width="150" class="img-thumbnail mb-2">
+
                     <?php else: ?>
                         <p class="text-muted">Sin imagen</p>
                     <?php endif; ?>

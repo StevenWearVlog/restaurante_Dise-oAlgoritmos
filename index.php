@@ -449,33 +449,38 @@ $pedidosEnCola = $cola->obtenerCola();
         </div>
 
     </section>
-
-   <section id="menu">
-    <div class="container">
-        <h2 class="text-center">Recomendados</h2>
-        <br>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <?php foreach ($menuLista as $menu): ?>
-                <div class="col d-flex justify-content-center">
-                    <div class="card h-100">
-                        <?php 
-                        $imgPath = !empty($menu['foto']) ? "admin/" . $menu['foto'] : "admin/uploads/menu/default.jpg";
-
-                        ?>
-                        <img src="<?php echo htmlspecialchars($imgPath); ?>" 
-                             alt="<?php echo htmlspecialchars($menu['nombre']); ?>" 
-                             class="card-img-top rounded-3">
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($menu["nombre"]); ?></h5>
-                            <p class="card-text small"><strong>Ingredientes: </strong><?php echo htmlspecialchars($menu["ingredientes"]); ?></p>
-                            <p class="card-text"><strong>Precio: </strong><?php echo htmlspecialchars($menu["precio"]); ?><strong>$</strong></p>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+<section id="menu">
+  <div class="container">
+    <h2 class="text-center">Recomendados</h2>
+    <br>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <?php foreach ($menuLista as $menu): ?>
+        <div class="col d-flex justify-content-center">
+          <div class="card h-100">
+            <?php 
+            $imgPath = !empty($menu['foto']) && file_exists($menu['foto']) 
+                ? $menu['foto'] 
+                : "uploads/menu/default.jpg";
+            ?>
+            <img src="<?php echo htmlspecialchars($imgPath); ?>" 
+                 alt="<?php echo htmlspecialchars($menu["nombre"]); ?>" 
+                 class="card-img-top rounded-3">
+            <div class="card-body">
+              <h5 class="card-title"><?php echo htmlspecialchars($menu["nombre"]); ?></h5>
+              <p class="card-text small">
+                <strong>Ingredientes: </strong><?php echo htmlspecialchars($menu["ingredientes"]); ?>
+              </p>
+              <p class="card-text">
+                <strong>Precio: </strong><?php echo htmlspecialchars($menu["precio"]); ?>$
+              </p>
+            </div>
+          </div>
         </div>
+      <?php endforeach; ?>
     </div>
+  </div>
 </section>
+
 
 <!-- SECCIÓN ÁRBOL -->
 <section id="sugerencias" class="container my-5">

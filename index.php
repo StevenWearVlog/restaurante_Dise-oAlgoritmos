@@ -267,7 +267,7 @@ $pedidosEnCola = $cola->obtenerCola();
         rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
         crossorigin="anonymous" />
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/styles.css">
 
 
 </head>
@@ -329,7 +329,7 @@ $pedidosEnCola = $cola->obtenerCola();
 
                     <h1><?php echo $banner["titulo"]; ?></h1>
                     <p><?php echo $banner["descripcion"] ?></p>
-                    <a href="<?php echo $banner["link"] ?>" class="btn btn-primary">Ver menú</a>
+                    <a href="#menu" class="btn btn-primary">Ver menú</a>
                 <?php endforeach ?>
             </div>
 

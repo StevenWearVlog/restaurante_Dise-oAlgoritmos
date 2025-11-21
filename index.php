@@ -900,6 +900,35 @@ function bfs(grafo, inicio, fin) {
         <?php endfor; ?>
     </section>
 
+        <section class="container mt-4">
+    <div class="col-md-6">
+      <div class="card p-3">
+        <h5>Grafos (DFS)</h5>
+        <p>Selecciona zonas para ver rutas.</p>
+        <div class="row">
+          <div class="col-6"><select id="inicioG" class="form-select"><option>Cocina</option><option>Barra</option><option>Mesas</option><option>Bodega</option><option>Caja</option><option>Salida</option></select></div>
+          <div class="col-6"><select id="finG" class="form-select"><option>Cocina</option><option>Barra</option><option>Mesas</option><option>Bodega</option><option>Caja</option><option>Salida</option></select></div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-secondary" onclick="calcularRutaDFS()">DFS (alguna ruta)</button>
+        </div>
+        <pre id="salidaGrafo" style="background:#f8f9fa;padding:8px;border-radius:6px;margin-top:10px"></pre>
+      </div>
+    </div>
+    </section>
+<br>
+
+        <section class="container mt-4">
+        <div class="card p-4 mb-4">
+            <h4>Ordenamiento Burbuja</h4>
+            <p>Ordena los platos del menú según su precio desde la base de datos.</p>
+            <button class="btn btn-info" onclick="ordenarBurbujaBD()">Ordenar con Burbuja</button>
+            <div id="resultadoBurbujaBD" class="mt-3 text-primary fw-bold"></div>
+        </div>
+        </section>
+
+<br>
+
 
 
     <section id="contacto" class="container mt-4"><br>
@@ -926,6 +955,80 @@ function bfs(grafo, inicio, fin) {
     <br>
 
 
+    <script>
+        function bfs(g, inicio, fin) {
+  const cola = [[inicio]];
+  const visit = new Set([inicio]);
+  while (cola.length) {
+    const ruta = cola.shift();
+    const node = ruta[ruta.length-1];
+    if (node === fin) return ruta;
+    for (const v of (g[node]||[])) {
+      if (!visit.has(v)) { visit.add(v); cola.push([...ruta, v]); }
+    }
+  }
+  return null;
+}
+function dfs(g, inicio, fin) {
+  const stack = [[inicio]];
+  const visit = new Set();
+  while (stack.length) {
+    const ruta = stack.pop();
+    const node = ruta[ruta.length-1];
+    if (node === fin) return ruta;
+    if (!visit.has(node)) {
+      visit.add(node);
+      for (const v of (g[node]||[])) {
+        stack.push([...ruta, v]);
+      }
+    }
+  }
+  return null;
+}
+function calcularRutaBFS() {
+  const ini = document.getElementById('inicioG').value;
+  const fin = document.getElementById('finG').value;
+  if (ini === fin) { document.getElementById('salidaGrafo').innerText = 'Elige dos zonas distintas.'; return; }
+  const r = bfs(grafo, ini, fin);
+  document.getElementById('salidaGrafo').innerText = r? 'Ruta BFS: ' + r.join(' → ') : 'No hay ruta';
+}
+function calcularRutaDFS() {
+  const ini = document.getElementById('inicioG').value;
+  const fin = document.getElementById('finG').value;
+  const r = dfs(grafo, ini, fin);
+  document.getElementById('salidaGrafo').innerText = r? 'Ruta DFS: ' + r.join(' → ') : 'No hay ruta';
+}
+
+
+    </script>
+
+<script>
+    // Convertir lista de la base de datos a JavaScript
+    let platosBD = <?php echo json_encode($menuLista); ?>;
+
+    function ordenarBurbujaBD() {
+    let platos = [...platosBD]; // copiamos para no modificar el original
+
+    for (let i = 0; i < platos.length - 1; i++) {
+        for (let j = 0; j < platos.length - 1 - i; j++) {
+            if (parseInt(platos[j].precio) > parseInt(platos[j+1].precio)) {
+                let temp = platos[j];
+                platos[j] = platos[j+1];
+                platos[j+1] = temp;
+            }
+        }
+    }
+
+    let salida = "<strong>Platos ordenados por precio (BD):</strong><br><br>";
+
+    platos.forEach(p => {
+        salida += `${p.nombre} — $${p.precio}<br>`;
+    });
+
+    document.getElementById("resultadoBurbujaBD").innerHTML = salida;
+}
+
+</script>
 
     <header>
         <!-- place navbar here -->

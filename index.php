@@ -674,21 +674,21 @@ function reiniciarArbol() {
     <h2 class="text-center mb-4">Curiosidades de nuestro restaurante</h2>
 
 
-    <div class="card p-4 mb-4">
+    <div class="container mt-4">
         <h4>Vamos a elegir el mejor plato calidad precio de nuestro menu</h4>
         <p>Selecciona siempre la mejor opción local: elegimos el plato con mejor relación calidad/precio.</p>
         <button class="btn btn-primary" onclick="ejecutarVoraz()">Ejecutar Voraz</button>
         <div id="resultadoVoraz" class="mt-3 text-success fw-bold"></div>
     </div>
 
-    <div class="card p-4 mb-4">
+    <div class="container mt-4">
         <h4>Costo total del menú diario.</h4>
         <p>Recorremos todos los platos para calcular el costo total del menú diario.</p>
         <button class="btn btn-warning" onclick="ejecutarIterativo()">Ejecutar Iterativo</button>
         <div id="resultadoIterativo" class="mt-3 text-success fw-bold"></div>
     </div>
 
-    <div class="card p-4 mb-4">
+    <div class="container mt-4">
         <h4>Escribe el numero de platos que crees que hay en  <br> el menu y sabras la cantidad de combinaciones posibles</h4>
         <p>Calculamos la cantidad de combinaciones posibles de platos según el número de opciones disponibles.</p>
         <input type="number" id="nPlatos" class="form-control w-25 mx-auto" placeholder="Número de platos" min="1">
@@ -700,40 +700,59 @@ function reiniciarArbol() {
 <script>
 
 function ejecutarVoraz() {
-    const platos = [
-        {nombre: "Carne asada", calidad: 9, precio: 25000},
-        {nombre: "Ensalada César", calidad: 7, precio: 12000},
-        {nombre: "Pasta al pesto", calidad: 8, precio: 18000},
-        {nombre: "Pollo BBQ", calidad: 9, precio: 20000}
-    ];
+    let platos = [...platosBD];
 
+    if (platos.length === 0) {
+        document.getElementById("resultadoVoraz").innerText = "No hay platos en la base de datos.";
+        return;
+    }
+
+    // Simulación de calidad automática basada en precio (solo para cumplir el algoritmo)
+    platos = platos.map(p => {
+        let precio = parseInt(p.precio);
+        let calidad = 5;
+
+        if (precio >= 25000) calidad = 9;
+        else if (precio >= 18000) calidad = 8;
+        else if (precio >= 15000) calidad = 7;
+
+        return { ...p, calidad: calidad };
+    });
+
+    // Algoritmo voraz real
     let mejor = platos[0];
     let mejorRelacion = mejor.calidad / mejor.precio;
 
     for (let i = 1; i < platos.length; i++) {
-        const relacion = platos[i].calidad / platos[i].precio;
-        if (relacion > mejorRelacion) {
+        const r = platos[i].calidad / platos[i].precio;
+        if (r > mejorRelacion) {
             mejor = platos[i];
-            mejorRelacion = relacion;
+            mejorRelacion = r;
         }
     }
 
-    document.getElementById('resultadoVoraz').innerText =
-        `✅ El mejor plato según la relación calidad/precio es: ${mejor.nombre} ($${mejor.precio})`;
+    document.getElementById("resultadoVoraz").innerHTML =
+        `🍽️ El mejor plato calidad/precio es <strong>${mejor.nombre}</strong>  
+        (Precio: $${mejor.precio}, Calidad: ${mejor.calidad})`;
 }
 
 function ejecutarIterativo() {
-    const precios = [25000, 18000, 15000, 20000, 12000];
-    let total = 0;
-
-
-    for (let i = 0; i < precios.length; i++) {
-        total += precios[i];
+    if (!platosBD || platosBD.length === 0) {
+        document.getElementById("resultadoIterativo").innerText = "No hay platos en el menú.";
+        return;
     }
 
-    document.getElementById('resultadoIterativo').innerText =
-        `💰 El costo total del menú diario es de $${total}`;
+    let total = 0;
+
+    // Recorrido iterativo de los platos de la base de datos
+    for (let i = 0; i < platosBD.length; i++) {
+        total += parseInt(platosBD[i].precio);
+    }
+
+    document.getElementById("resultadoIterativo").innerHTML =
+        `💰 El costo total de todos los platos del menú es: <strong>$${total}</strong>`;
 }
+
 
 
 function factorial(n) {

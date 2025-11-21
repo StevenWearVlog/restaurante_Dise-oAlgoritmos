@@ -288,7 +288,7 @@ $pedidosEnCola = $cola->obtenerCola();
                     <li class="nav-item">
                         <a class="nav-item nav-link active" href="#banner" aria-current="page">Inicio<span class="visually-hidden">(current)</span></a>
                     </li>
-                    
+
                     <li class="nav-item">
                         <a class="nav-link" href="#Chef">Chef</a>
                     </li>
@@ -320,7 +320,7 @@ $pedidosEnCola = $cola->obtenerCola();
     </nav>
 
     <section id="banner" class="container-fluid p-0">
-        <div class="banner-img" style="position:relative; background:url('images/banners.jpg') center/cover no-repeat; height: 400px;">
+        <div class="banner-img" style="position:relative; background:url('images/banner_restaurante.jpg') center/cover no-repeat; height: 400px;">
             <div class="banner-text" style="position:absolute; top:50%; left: 50%; transform:translate(-50%, -50%); text-align:center;">
                 <?php foreach ($listaBanner as $banner): ?>
 

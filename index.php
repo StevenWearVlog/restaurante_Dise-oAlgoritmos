@@ -495,9 +495,7 @@ $pedidosEnCola = $cola->obtenerCola();
 </section>
 
 <script>
-// ==========================
-// Árbol de Decisiones - Restaurante
-// ==========================
+
 const arbol = {
     pregunta: "¿Te gustaría comer algo liviano o contundente?",
     opciones: {
@@ -551,7 +549,7 @@ const arbol = {
 
 
 
-let nodoActual = arbol; // Nodo inicial del árbol
+let nodoActual = arbol;
 
 function responder(opcion) {
     if (!nodoActual.opciones || !nodoActual.opciones[opcion]) {
@@ -561,12 +559,12 @@ function responder(opcion) {
 
     nodoActual = nodoActual.opciones[opcion];
 
-    // Si es una pregunta, mostramos nuevas opciones
+
     if (nodoActual.pregunta) {
         document.getElementById("texto").textContent = nodoActual.pregunta;
         mostrarBotones(Object.keys(nodoActual.opciones));
     } 
-    // Si ya hay resultado, mostramos la recomendación
+
     else if (nodoActual.resultado) {
         document.getElementById("texto").textContent = nodoActual.resultado;
         document.getElementById("botones").innerHTML = `
@@ -577,7 +575,7 @@ function responder(opcion) {
 
 function mostrarBotones(opciones) {
     const contenedor = document.getElementById("botones");
-    contenedor.innerHTML = ""; // Limpiamos botones anteriores
+    contenedor.innerHTML = ""; 
     opciones.forEach(op => {
         const btn = document.createElement("button");
         btn.className = "btn btn-outline-success mx-2";
@@ -620,9 +618,7 @@ function reiniciarArbol() {
 // index.php
 ?>
 
-  <!-- ========================== -->
-  <!-- 🔹 PILA -->
-  <!-- ========================== -->
+
   <section id="pila" class="ms-4 mt-4">
     <h2 class="text-center mb-3">Pila (Platos Apilados)</h2>
     <div class="card p-4 text-center">
@@ -636,9 +632,7 @@ function reiniciarArbol() {
     </div>
   </section>
 
-  <!-- ========================== -->
-  <!-- 🔹 COLA -->
-  <!-- ========================== -->
+
   <section id="cola" class="ms-4 mt-4">
     <h2 class="text-center mb-3">Cola (Clientes esperando)</h2>
     <div class="card p-4 text-center">
@@ -652,9 +646,7 @@ function reiniciarArbol() {
     </div>
   </section>
 
-    <!-- ========================== -->
-  <!-- 🕸️ GRAFO -->
-  <!-- ========================== -->
+
   <section id="grafo" class="card p-4 mb-4">
     <h2 class="text-center mb-3">Rutas del Restaurante</h2>
     <div class="card p-4 text-center">
@@ -681,7 +673,7 @@ function reiniciarArbol() {
   <section id="algoritmos" class="container my-5">
     <h2 class="text-center mb-4">Curiosidades de nuestro restaurante</h2>
 
-    <!-- ================== VORAZ ================== -->
+
     <div class="card p-4 mb-4">
         <h4>Vamos a elegir el mejor plato calidad precio de nuestro menu</h4>
         <p>Selecciona siempre la mejor opción local: elegimos el plato con mejor relación calidad/precio.</p>
@@ -689,7 +681,6 @@ function reiniciarArbol() {
         <div id="resultadoVoraz" class="mt-3 text-success fw-bold"></div>
     </div>
 
-    <!-- ================== ITERATIVO ================== -->
     <div class="card p-4 mb-4">
         <h4>Costo total del menú diario.</h4>
         <p>Recorremos todos los platos para calcular el costo total del menú diario.</p>
@@ -697,7 +688,6 @@ function reiniciarArbol() {
         <div id="resultadoIterativo" class="mt-3 text-success fw-bold"></div>
     </div>
 
-    <!-- ================== RECURSIVIDAD ================== -->
     <div class="card p-4 mb-4">
         <h4>Escribe el numero de platos que crees que hay en  <br> el menu y sabras la cantidad de combinaciones posibles</h4>
         <p>Calculamos la cantidad de combinaciones posibles de platos según el número de opciones disponibles.</p>
@@ -708,7 +698,7 @@ function reiniciarArbol() {
 </section>
 
 <script>
-// ================== ALGORITMO VORAZ ==================
+
 function ejecutarVoraz() {
     const platos = [
         {nombre: "Carne asada", calidad: 9, precio: 25000},
@@ -732,12 +722,11 @@ function ejecutarVoraz() {
         `✅ El mejor plato según la relación calidad/precio es: ${mejor.nombre} ($${mejor.precio})`;
 }
 
-// ================== ALGORITMO ITERATIVO ==================
 function ejecutarIterativo() {
     const precios = [25000, 18000, 15000, 20000, 12000];
     let total = 0;
 
-    // Sumatoria iterativa
+
     for (let i = 0; i < precios.length; i++) {
         total += precios[i];
     }
@@ -746,7 +735,7 @@ function ejecutarIterativo() {
         `💰 El costo total del menú diario es de $${total}`;
 }
 
-// ================== RECURSIVIDAD ==================
+
 function factorial(n) {
     if (n <= 1) return 1;
     return n * factorial(n - 1);
@@ -771,9 +760,7 @@ function ejecutarRecursivo() {
 
 
   <script>
-  // =========================================
-  // 🔹 PILA (LIFO)
-  // =========================================
+
   let pila = [];
 
   function pushPila() {
@@ -867,7 +854,7 @@ function buscarRuta() {
     "❌ No existe conexión entre esas zonas.";
 }
 
-// Algoritmo BFS en JS
+
 function bfs(grafo, inicio, fin) {
   const cola = [[inicio]];
   const visitados = new Set([inicio]);

@@ -288,10 +288,7 @@ $pedidosEnCola = $cola->obtenerCola();
                     <li class="nav-item">
                         <a class="nav-item nav-link active" href="#banner" aria-current="page">Inicio<span class="visually-hidden">(current)</span></a>
                     </li>
-
-                    <li class="nav-item">
-                         <a class="nav-item nav-link active" href="#evento-destacado" aria-current="page">Eventos<span class="visually-hidden">(current)</span></a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="#Chef">Chef</a>
                     </li>

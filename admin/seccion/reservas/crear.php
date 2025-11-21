@@ -2,21 +2,24 @@
 include("../../bd.php");
 include("../../templates/header.php");
 
-// Para mostrar mapa simple de mesas ocupadas (opcional)
+// CONFIGURACIÓN DE MESAS
 $totalMesas = 10;
 $columnas = 5;
 $filas = ceil($totalMesas / $columnas);
+
+// Inicializar mapa de mesas
 $mesas = array_fill(0, $filas, array_fill(0, $columnas, 0));
 
+// Obtener todas las reservas
 $occupiedStmt = $pdo->prepare("SELECT mesa, estado FROM reservas");
 $occupiedStmt->execute();
 $all = $occupiedStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Marcar mesas ocupadas SOLO SI estado = Reservada o Completada
 foreach ($all as $r) {
-    $estado = $r['estado'];
-    $isOcupada = ( $estado === 1 || $estado === '1' || in_array(strtolower((string)$estado), ['ocupado','reservada','reservado']) );
-    if ($isOcupada) {
+    if ($r['estado'] === "Reservada" || $r['estado'] === "Completada") {
         $m = (int)$r['mesa'];
-        if ($m>=1 && $m <= $totalMesas) {
+        if ($m >= 1 && $m <= $totalMesas) {
             $fila = floor(($m - 1) / $columnas);
             $col = ($m - 1) % $columnas;
             $mesas[$fila][$col] = 1;
@@ -24,9 +27,11 @@ foreach ($all as $r) {
     }
 }
 
-// Crear reserva
+// *** CREAR RESERVA ***
 $errores = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $cliente = trim($_POST["nombre_cliente"] ?? '');
     $telefono = trim($_POST["telefono"] ?? '');
     $fecha = $_POST["fecha"] ?? '';
@@ -34,22 +39,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $numero_personas = (int)($_POST["numero_personas"] ?? 1);
     $mesa = (int)($_POST["mesa"] ?? 0);
 
+    // Validaciones
     if ($cliente === '') $errores[] = "El nombre es obligatorio.";
     if ($telefono === '') $errores[] = "El teléfono es obligatorio.";
     if ($fecha === '' || $hora === '') $errores[] = "Fecha y hora son obligatorias.";
     if ($mesa < 1 || $mesa > $totalMesas) $errores[] = "Mesa inválida.";
 
-    // Comprobar si mesa ocupada (según estado)
-    $check = $pdo->prepare("SELECT COUNT(*) FROM reservas WHERE mesa = :mesa AND (estado = 'ocupado' OR estado = 'Reservada' OR estado = 'reservada' OR estado = 1 OR estado = '1')");
+    // Verificar si la mesa ya tiene una reserva activa
+    $check = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM reservas 
+        WHERE mesa = :mesa 
+        AND estado = 'Reservada'
+    ");
     $check->execute([':mesa' => $mesa]);
+
     if ($check->fetchColumn() > 0) {
-        $errores[] = "La mesa seleccionada ya está ocupada.";
+        $errores[] = "La mesa seleccionada ya está reservada.";
     }
 
+    // Si no hay errores → Guardar reserva
     if (empty($errores)) {
-        $insert = $pdo->prepare("INSERT INTO reservas (nombre_cliente, telefono, fecha, hora, numero_personas, mesa, estado)
-                                 VALUES (:nombre, :telefono, :fecha, :hora, :num, :mesa, :estado)");
-        $estado = 'ocupado'; // guardamos como 'ocupado' por consistencia
+
+        // Cuando se crea una reserva, siempre inicia como "Reservada"
+        $estado = "Reservada";
+
+        $insert = $pdo->prepare("
+            INSERT INTO reservas 
+            (nombre_cliente, telefono, fecha, hora, numero_personas, mesa, estado)
+            VALUES (:nombre, :telefono, :fecha, :hora, :num, :mesa, :estado)
+        ");
+
         $insert->execute([
             ':nombre' => $cliente,
             ':telefono' => $telefono,
@@ -59,11 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':mesa' => $mesa,
             ':estado' => $estado
         ]);
+
         header("Location: index.php");
         exit;
     }
 }
 ?>
+
 
 <!doctype html>
 <html lang="es">
